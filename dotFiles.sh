@@ -58,6 +58,7 @@ if [[ $dotfiles == "y" ]];then
     mkdir -p ~/go
     cp dots/.zshrc ~/.zshrc
     cp dots/.tmux.conf ~/.tmux.conf
+    cd ~ && git clone https://github.com/pwndbg/pwndbg && cd pwndbg && ./setup.sh
 elif [[ $dotfiles == "n" ]];then
     echo "nay"
 else
