@@ -51,7 +51,7 @@ echo "dotfiles config? y/n"
 read dotfiles
 if [[ $dotfiles == "y" ]];then
     sudo dpkg --add-architecture i386
-    sudo apt update && sudo apt install curl zsh tmux vim binutils libc6:i386 libncurses5:i386 libstdc++6:i386 -y
+    sudo apt update && sudo apt install curl zsh tmux vim binutils libc6:i386 libncurses5:i386 libstdc++6:i386 openjdk-17-jdk -y
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     go=$(curl https://go.dev/dl/ -s 2>/dev/null | grep linux | grep amd64 | head -n 1 | awk -F \" '{print $4}')
     wget https://go.dev$go
