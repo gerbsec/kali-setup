@@ -56,8 +56,9 @@ if [[ $dotfiles == "y" ]];then
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $(echo $go | awk -F "/" '{print $3}')
     rm -rf $(echo $go | awk -F "/" '{print $3}')
     mkdir -p ~/go
-    cp dots/.zshrc ~/.zshrc
-    cp dots/.tmux.conf ~/.tmux.conf
+    cp ~/repo/DotFiles/dots/.zshrc ~/.zshrc
+    cp ~/repo/DotFiles/dots/.tmux.conf ~/.tmux.conf
+    bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
 elif [[ $dotfiles == "n" ]];then
     echo "nay"
 else
