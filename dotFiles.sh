@@ -10,34 +10,35 @@ if [[ $firefox == "y" ]];then
     echo "Setting up firefox preferences"
     for i in $(find ~ | grep firefox | grep prefs.js); do cp firefoxConfig/prefs.js $i 2>/dev/null;done
     echo "Setting up firefox extensions"
-    for i in $(find ~ | grep firefox | grep default | grep extensions);do
-        if [[ $i == *extensions ]];then
+    for i in $(find ~ | grep firefox| grep default | grep -v cache);do
+        if [[ $i == *release ]];then
             dir=$i
         fi
     done
+    mkdir -p $dir/extensions
     mkdir -p extensions && cd extensions
     wget https://addons.mozilla.org/firefox/downloads/file/4028976/ublock_origin-1.45.2.xpi
     unzip ublock_origin-1.45.2.xpi
     name=$(cat manifest.json | grep \"id\" | awk -F \" '{print $4}')
-    mv ublock_origin-1.45.2.xpi $dir/$name.xpi
+    mv ublock_origin-1.45.2.xpi $dir/extensions/$name.xpi
     rm -rf extensions
     mkdir -p extensions && cd extensions
     wget https://addons.mozilla.org/firefox/downloads/file/3616824/foxyproxy_standard-7.5.1.xpi
     unzip foxyproxy_standard-7.5.1.xpi
     name=$(cat manifest.json | grep \"id\" | awk -F \" '{print $4}')
-    mv foxyproxy_standard-7.5.1.xpi $dir/$name.xpi
+    mv foxyproxy_standard-7.5.1.xpi $dir/extensions/$name.xpi
     rm -rf extensions
     mkdir -p extensions && cd extensions
     wget https://addons.mozilla.org/firefox/downloads/file/3755764/cookie_editor-1.10.1.xpi
     unzip cookie_editor-1.10.1.xpi
     name=$(cat manifest.json | grep \"id\" | awk -F \" '{print $4}')
-    mv cookie_editor-1.10.1.xpi $dir/$name.xpi
+    mv cookie_editor-1.10.1.xpi $dir/extensions/$name.xpi
     rm -rf extensions
     mkdir -p extensions && cd extensions
     wget https://addons.mozilla.org/firefox/downloads/file/3952467/user_agent_string_switcher-0.4.8.xpi
     unzip user_agent_string_switcher-0.4.8.xpi
     name=$(cat manifest.json | grep \"id\" | awk -F \" '{print $4}')
-    mv user_agent_string_switcher-0.4.8.xpi $dir/$name.xpi
+    mv user_agent_string_switcher-0.4.8.xpi $dir/extensions/$name.xpi
     rm -rf extensions
 elif [[ $firefox == "n" ]];then
     echo "ok moving on"
