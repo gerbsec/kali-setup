@@ -49,7 +49,7 @@ fi
 echo "dotfiles config? y/n"
 read dotfiles
 if [[ $dotfiles == "y" ]];then
-    sudo apt update && sudo apt install curl zsh -y
+    sudo apt update && sudo apt install curl zsh tmux vim -y
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     go=$(curl https://go.dev/dl/ -s 2>/dev/null | grep linux | grep amd64 | head -n 1 | awk -F \" '{print $4}')
     wget https://go.dev$go
