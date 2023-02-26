@@ -25,10 +25,8 @@ bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
 
 mkdir -p ~/.local/share/fonts/
 
-curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest  | grep -E "browser_download_url.*Iosevka.zip" | cut -d : -f 2,3 | tr -d \" |  wget -qi -
 curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest  | grep -E "browser_download_url.*RobotoMono.zip" | cut -d : -f 2,3 | tr -d \" |  wget -qi -
 
-unzip Iosevka.zip -d ~/.local/share/fonts/
 unzip RobotoMono.zip -d ~/.local/share/fonts/
 fc-cache -fv
 
