@@ -1,12 +1,11 @@
-echo "Script to set up VM on spawn"
+echo "Script to set up kali VM on spawn"
 echo "No need to run with root, if it needs sudo it'll ask for it just be ready to enter the password"
-echo "These are my settings not yours so haha"
+echo "These are my settings not yours so don't hate me cause im beautiful"
 sleep 1
 for i in $(find ~ | grep firefox | grep search.json); do cp firefoxConfig/search.json.mozlz4 $i 2>/dev/null;done
 echo "Setting up firefox preferences"
 for i in $(find ~ | grep firefox | grep prefs.js); do cp firefoxConfig/prefs.js $i 2>/dev/null;done
 
-echo "dotfiles config? y/n"
 sudo dpkg --add-architecture i386
 sudo apt update && sudo apt install curl zsh tmux vim binutils dirsearch libc7:i386 libncurses5:i386 libstdc++6:i386 openjdk-17-jdk -y
 sudo apt install -y arandr flameshot arc-theme feh i3blocks i3status i3 i3-wm lxappearance python3-pip rofi unclutter cargo compton papirus-icon-theme imagemagick
@@ -19,7 +18,7 @@ sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $(echo $go | awk -F "/"
 rm -rf $(echo $go | awk -F "/" '{print $3}')
 mkdir -p ~/go
 bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
-cp ~/repo/DotFiles/dots/.tmux.conf ~/.tmux.conf
+cp ~/DotFiles/dots/.tmux.conf ~/.tmux.conf
 
 mkdir -p ~/.local/share/fonts/
 
@@ -67,7 +66,7 @@ curl -s https://api.github.com/repos/espanso/espanso/releases/latest  | grep -E 
 chmod +x espanso && sudo mv espanso /usr/bin/espanso 
 espanso service register
 espanso start
-wget 
+cp ~/DotFiles/dots/base.yml ~/.config/espanso/match/base.yml
 
 echo "Done! Grab some wallpaper and run pywal -i filename to set your color scheme. To have the wallpaper set on every boot edit ~.fehbg"
 echo "After reboot: Select i3 on login, run lxappearance and select arc-dark"
