@@ -30,13 +30,7 @@ curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest  | gre
 
 unzip Iosevka.zip -d ~/.local/share/fonts/
 unzip RobotoMono.zip -d ~/.local/share/fonts/
-
 fc-cache -fv
-
-# wget https://github.com/barnumbirr/alacritty-debian/releases/download/v0.10.0-rc4-1/alacritty_0.10.0-rc4-1_amd64_bullseye.deb
-# curl -s https://api.github.com/repos/barnumbirr/alacritty-debian/releases/latest  | grep -E "browser_download_url.*bullseye.deb" | cut -d : -f 2,3 | tr -d \" |  wget -qi -
-# sudo dpkg -i *bullseye.deb
-# sudo apt install -f
 
 git clone https://www.github.com/Airblader/i3 i3-gaps
 cd i3-gaps && mkdir -p build && cd build && meson ..
@@ -44,14 +38,10 @@ ninja
 sudo ninja install
 cd ../..
 
-pip3 install pywal
-
 mkdir -p ~/.config/i3
 mkdir -p ~/.config/compton
 mkdir -p ~/.config/rofi
-# mkdir -p ~/.config/alacritty
-# cp .config/i3/config ~/.config/i3/config
-# cp .config/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
+
 cp .config/i3/i3blocks.conf ~/.config/i3/i3blocks.conf
 cp .config/compton/compton.conf ~/.config/compton/compton.conf
 cp .config/rofi/config ~/.config/rofi/config
