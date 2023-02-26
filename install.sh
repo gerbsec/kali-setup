@@ -73,5 +73,5 @@ cp ~/DotFiles/dots/.zshrc ~/.zshrc
 
 echo "Import Bookmarks"
 echo "Get Burp pro :D"
-echo "Done! Grab some wallpaper and run pywal -i filename to set your color scheme. To have the wallpaper set on every boot edit ~.fehbg"
+echo "Done! To have the wallpaper set on every boot edit ~.fehbg"
 echo "After reboot: Select i3 on login, run lxappearance and select arc-dark"
