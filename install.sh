@@ -61,10 +61,9 @@ espanso service register
 espanso start
 cp ~/DotFiles/dots/base.yml ~/.config/espanso/match/base.yml
 cp ~/DotFiles/dots/.tmux.conf ~/.tmux.conf
-
-
+echo "type exit after zsh intall"
+sleep 10
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-exit
 cp ~/DotFiles/dots/.zshrc ~/.zshrc
 
 
