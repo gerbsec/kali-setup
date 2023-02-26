@@ -69,8 +69,8 @@ espanso start
 cp ~/DotFiles/dots/base.yml ~/.config/espanso/match/base.yml
 
 echo "Done! Grab some wallpaper and run pywal -i filename to set your color scheme. To have the wallpaper set on every boot edit ~.fehbg"
+echo "Import Bookmarks"
+echo "Get Burp pro :D"
 echo "After reboot: Select i3 on login, run lxappearance and select arc-dark"
-echo "get burp pro :D"
-
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
