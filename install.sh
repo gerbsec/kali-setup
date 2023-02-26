@@ -45,6 +45,7 @@ mkdir -p ~/.config/rofi
 cp .config/i3/i3blocks.conf ~/.config/i3/i3blocks.conf
 cp .config/compton/compton.conf ~/.config/compton/compton.conf
 cp .config/rofi/config ~/.config/rofi/config
+cp .config/i3/config ~/.config/i3/config
 
 cp .fehbg ~/.fehbg
 mkdir -p ~/.wallpaper
