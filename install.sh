@@ -64,6 +64,7 @@ cp ~/DotFiles/dots/.tmux.conf ~/.tmux.conf
 
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+exit
 cp ~/DotFiles/dots/.zshrc ~/.zshrc
 
 
