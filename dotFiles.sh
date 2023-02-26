@@ -1,24 +1,27 @@
 echo "Script to set up kali VM on spawn"
 echo "No need to run with root, if it needs sudo it'll ask for it just be ready to enter the password"
 echo "These are my settings not yours so don't hate me cause im beautiful"
-sleep 1
+sleep 2
+echo "Quick and dirty Firefox settings"
 for i in $(find ~ | grep firefox | grep search.json); do cp firefoxConfig/search.json.mozlz4 $i 2>/dev/null;done
-echo "Setting up firefox preferences"
 for i in $(find ~ | grep firefox | grep prefs.js); do cp firefoxConfig/prefs.js $i 2>/dev/null;done
 
+echo "Installing some heat (dependencies)"
+sleep 2
 sudo dpkg --add-architecture i386
 sudo apt update && sudo apt install curl zsh tmux vim binutils dirsearch libc7:i386 libncurses5:i386 libstdc++6:i386 openjdk-17-jdk -y
 sudo apt install -y arandr flameshot arc-theme feh i3blocks i3status i3 i3-wm lxappearance python3-pip rofi unclutter cargo compton papirus-icon-theme imagemagick
 sudo apt install -y libxcb-shape0-dev libxcb-keysyms1-dev libpango1.0-dev libxcb-util0-dev xcb libxcb1-dev libxcb-icccm4-dev libyajl-dev libev-dev libxcb-xkb-dev libxcb-cursor-dev libxkbcommon-dev libxcb-xinerama0-dev libxkbcommon-x11-dev libstartup-notification0-dev libxcb-randr0-dev libxcb-xrm0 libxcb-xrm-dev autoconf meson
 sudo apt install -y libxcb-render-util0-dev libxcb-shape0-dev libxcb-xfixes0-dev 
 sudo apt autoremove && sudo apt autoclean -y
+
+echo "Goooooolang setup"
 go=$(curl https://go.dev/dl/ -s 2>/dev/null | grep linux | grep amd64 | head -n 1 | awk -F \" '{print $4}')
 wget https://go.dev$go
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $(echo $go | awk -F "/" '{print $3}')
 rm -rf $(echo $go | awk -F "/" '{print $3}')
 mkdir -p ~/go
 bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
-cp ~/DotFiles/dots/.tmux.conf ~/.tmux.conf
 
 mkdir -p ~/.local/share/fonts/
 
@@ -67,10 +70,14 @@ chmod +x espanso && sudo mv espanso /usr/bin/espanso
 espanso service register
 espanso start
 cp ~/DotFiles/dots/base.yml ~/.config/espanso/match/base.yml
+cp ~/DotFiles/dots/.tmux.conf ~/.tmux.conf
 
-echo "Done! Grab some wallpaper and run pywal -i filename to set your color scheme. To have the wallpaper set on every boot edit ~.fehbg"
-echo "Import Bookmarks"
-echo "Get Burp pro :D"
-echo "After reboot: Select i3 on login, run lxappearance and select arc-dark"
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+cp ~/DotFiles/dots/.zshrc ~/.zshrc
+
+
+echo "Import Bookmarks"
+echo "Get Burp pro :D"
+echo "Done! Grab some wallpaper and run pywal -i filename to set your color scheme. To have the wallpaper set on every boot edit ~.fehbg"
+echo "After reboot: Select i3 on login, run lxappearance and select arc-dark"
