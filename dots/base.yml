@@ -17,7 +17,7 @@ global_vars:
 
 matches:
   - trigger: ":nmap"
-    replace : nmap -sC -sV -v -p- -o nmap --min-rate 
+    replace : sudo nmap -sC -sV -v -p- -o nmap --min-rate 
 
   - trigger: ":setup"
     replace : |
