@@ -10,7 +10,7 @@ echo "Installing some heat (dependencies)"
 sleep 2
 sudo dpkg --add-architecture i386
 sudo apt update && sudo apt dist-upgrade -y
-sudo apt install curl zsh tmux vim binutils gobuster seclists dirsearch libc7:i386 libncurses5:i386 libstdc++6:i386 openjdk-17-jdk -y
+sudo apt install curl zsh tmux vim binutils gobuster seclists dirsearch libncurses5:i386 libstdc++6:i386 openjdk-17-jdk -y
 sudo apt install -y arandr flameshot arc-theme feh i3blocks i3status i3 i3-wm lxappearance python3-pip rofi unclutter cargo compton papirus-icon-theme imagemagick
 sudo apt install -y libxcb-shape0-dev libxcb-keysyms1-dev libpango1.0-dev libxcb-util0-dev xcb libxcb1-dev libxcb-icccm4-dev libyajl-dev libev-dev libxcb-xkb-dev libxcb-cursor-dev libxkbcommon-dev libxcb-xinerama0-dev libxkbcommon-x11-dev libstartup-notification0-dev libxcb-randr0-dev libxcb-xrm0 libxcb-xrm-dev autoconf meson
 sudo apt install -y libxcb-render-util0-dev libxcb-shape0-dev libxcb-xfixes0-dev 
