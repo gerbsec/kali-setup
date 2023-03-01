@@ -3,8 +3,8 @@ echo "No need to run with root, if it needs sudo it'll ask for it just be ready 
 echo "These are my settings not yours so don't hate me cause im beautiful"
 sleep 2
 echo "Quick and dirty Firefox settings"
-for i in $(find ~ | grep firefox | grep search.json); do cp firefoxConfig/search.json.mozlz4 $i 2>/dev/null;done
-for i in $(find ~ | grep firefox | grep prefs.js); do cp firefoxConfig/prefs.js $i 2>/dev/null;done
+for i in $(find ~ | grep firefox | grep search.json); do cp ~/kali-setup/firefoxConfig/search.json.mozlz4 $i 2>/dev/null;done
+for i in $(find ~ | grep firefox | grep prefs.js); do cp ~/kali-setup/firefoxConfig/prefs.js $i 2>/dev/null;done
 
 echo "Installing some heat (dependencies)"
 sleep 2
@@ -48,7 +48,7 @@ cp .config/i3/config ~/.config/i3/config
 
 cp .fehbg ~/.fehbg
 mkdir -p ~/.wallpaper
-cp wallpaper.jpeg ~/.wallpaper/wallpaper.jpeg
+cp ~/kali-setup/wallpaper.jpeg ~/.wallpaper/wallpaper.jpeg
 
 cp .config/i3/clipboard_fix.sh ~/.config/i3/clipboard_fix.sh
 
@@ -66,14 +66,14 @@ espanso start
 cp ~/kali-setup/dots/base.yml ~/.config/espanso/match/base.yml
 cp ~/kali-setup/dots/.tmux.conf ~/.tmux.conf
 sudo echo "server=1.1.1.1" >> /etc/dnsmasq.d/gerbsec.conf 
-sudo echo "server=1.0.0.1" >> /etc/dnsmasq.d/gerbsec/conf
+sudo echo "server=1.0.0.1" >> /etc/dnsmasq.d/gerbsec.conf
+sudo echo "server=`hostname -I | awk '{print $1}'"` > /etc/dnsmasq.d/gerbsec.conf
 sudo echo "nameserver=127.0.0.1" > /etc/resolv.conf
 sudo chattr +i /etc/resolv.conf
-echo "type exit after zsh intall"
+echo "type exit after zsh install"
 sleep 10
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 cp ~/kali-setup/dots/.zshrc ~/.zshrc
-
 
 echo "Import Bookmarks"
 echo "Get Burp pro :D"
