@@ -53,7 +53,7 @@ matches:
       stty raw -echo; fg
       stty rows 54 
       stty columns 141
-      export TERM=tmux-256color
+      export TERM=screen
 
   - trigger: ":persist"
     replace: |
