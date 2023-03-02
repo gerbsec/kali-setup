@@ -43,7 +43,7 @@ matches:
   - trigger: ":pty"
     replace: |
       python3 -c 'import pty; pty.spawn("/bin/bash")' || python2 -c 'import pty; pty.spawn("/bin/bash")' || python -c 'import pty; pty.spawn("/bin/bash")' || python2.7 -c 'import pty; pty.spawn("/bin/bash")' || python3.6 -c 'import pty; pty.spawn("/bin/bash")' || python3.5 -c 'import pty; pty.spawn("/bin/bash")' || script -qc /bin/bash /dev/null 
-      export TERM=tmux-256color
+      export TERM=screen
       stty rows 54
       stty columns 141
 
