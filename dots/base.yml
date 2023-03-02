@@ -57,7 +57,7 @@ matches:
 
   - trigger: ":persist"
     replace: |
-      mkdir -p /root/.ssh
+      mkdir -p ~/.ssh
       echo "{{ssh_key}}" >> ~/.ssh/authorized_keys
   
   - trigger: ":rev"
