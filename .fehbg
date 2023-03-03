@@ -1,2 +1,2 @@
 #!/bin/sh
-feh --no-fehbg --bg-fill '~/.wallpaper/wallpaper.jpeg' 
+feh --no-fehbg --bg-fill '/home/kali/.wallpaper/wallpaper.jpeg' 
