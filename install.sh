@@ -68,6 +68,8 @@ cp ~/kali-setup/dots/.tmux.conf ~/.tmux.conf
 sudo vim /etc/dnsmasq.d/gerbsec.conf
 sudo echo vim /etc/resolv.conf
 sudo chattr +i /etc/resolv.conf
+sudo systemctl enable dnsmasq
+sudo systemctl start dnsmasq
 echo "type exit after zsh install"
 sleep 10
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
