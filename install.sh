@@ -65,10 +65,8 @@ espanso service register
 espanso start
 cp ~/kali-setup/dots/base.yml ~/.config/espanso/match/base.yml
 cp ~/kali-setup/dots/.tmux.conf ~/.tmux.conf
-sudo echo "server=1.1.1.1" >> /etc/dnsmasq.d/gerbsec.conf 
-sudo echo "server=1.0.0.1" >> /etc/dnsmasq.d/gerbsec.conf
-sudo echo "server=`hostname -I | awk '{print $1}'"` > /etc/dnsmasq.d/gerbsec.conf
-sudo echo "nameserver=127.0.0.1" > /etc/resolv.conf
+sudo vim /etc/dnsmasq.d/gerbsec.conf
+sudo echo vim /etc/resolv.conf
 sudo chattr +i /etc/resolv.conf
 echo "type exit after zsh install"
 sleep 10
