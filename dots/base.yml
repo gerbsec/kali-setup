@@ -76,5 +76,5 @@ matches:
       ./proxy -selfcert
   
   - trigger: ":aligolo"
-    replace: | 
-      ./agent -connect {{IP}}:11601
+    replace: .\agent -connect {{IP}}:11601
+    
