@@ -78,5 +78,3 @@ matches:
   - trigger: ":aligolo"
     replace: | 
       ./agent -connect {{IP}}:11601
-  
-  -
