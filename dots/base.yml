@@ -135,6 +135,9 @@ matches:
   - trigger: ":aligolo"
     replace: ./agent -connect {{IP}}:443 -ignore-cert
 
+  - trigger: ":rligolo"
+    replace: sudo ip route add 192.168.110.0/24 dev ligolo
+
 # EXPLOITS
 
   - trigger: ":suid"
