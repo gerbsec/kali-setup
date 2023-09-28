@@ -28,6 +28,9 @@ echo "Installing bloodhound"
 apt-get install -y apt-transport-https
 apt-get install -y neo4j
 systemctl start neo4j
+curl -L "https://github.com/BloodHoundAD/BloodHound/releases/download/4.0.1/BloodHound-linux-x64.zip" --output /tmp/bloodhound.zip
+unzip /tmp/bloodhound.zip -d /opt
+apt-get install -y bloodhound
 
 mkdir -p ~/.local/share/fonts/
 
