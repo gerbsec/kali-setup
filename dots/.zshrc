@@ -107,6 +107,7 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias bloodhound='/opt/BloodHound-linux-x64/BloodHound --no-sandbox'
 export PATH=~/.local/bin:$PATH
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
