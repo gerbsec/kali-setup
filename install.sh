@@ -24,6 +24,11 @@ rm -rf $(echo $go | awk -F "/" '{print $3}')
 mkdir -p ~/go
 bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
 
+echo "Installing bloodhound"
+apt-get install -y apt-transport-https
+apt-get install -y neo4j
+systemctl start neo4j
+
 mkdir -p ~/.local/share/fonts/
 
 curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest  | grep -E "browser_download_url.*RobotoMono.zip" | cut -d : -f 2,3 | tr -d \" |  wget -qi -
