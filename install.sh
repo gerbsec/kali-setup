@@ -23,7 +23,7 @@ bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
 echo "Installing bloodhound"
 systemctl enable neo4j
 curl -L "https://github.com/BloodHoundAD/BloodHound/releases/download/4.0.1/BloodHound-linux-x64.zip" --output /tmp/bloodhound.zip
-unzip /tmp/bloodhound.zip -d /opt
+sudo unzip /tmp/bloodhound.zip -d /opt
 
 mkdir -p ~/.local/share/fonts/
 curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest  | grep -E "browser_download_url.*RobotoMono.zip" | cut -d : -f 2,3 | tr -d \" |  wget -qi -
