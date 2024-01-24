@@ -8,7 +8,7 @@ global_vars:
   - name: "IP"
     type: "shell"
     params:
-      cmd: "ip a | grep -q tun0 && hostname -I | awk '{print $(NF-1)}' || hostname -I | awk '{print $1}'"
+      cmd: "/sbin/ip -o -4 addr list tun0 | awk '{print $4}' | cut -d/ -f1 || /sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1"
 
   - name: "ssh_key"
     type: "shell"
