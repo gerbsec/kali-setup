@@ -8,7 +8,7 @@ global_vars:
   - name: "IP"
     type: "shell"
     params:
-      cmd: "ip -o -4 addr show tun0 2>/dev/null | grep -oP '(?<=inet\s)\d+(\.\d+){3}' || ip -o -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}'"
+      cmd: ip -o -4 addr show tun0 2>/dev/null | grep -oP '(?<=inet\s)\d+(\.\d+){3}' || ip -o -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
 
   - name: "ssh_key"
     type: "shell"
