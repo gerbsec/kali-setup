@@ -12,6 +12,7 @@ sudo apt install -y libxcb-shape0-dev libxcb-keysyms1-dev libpango1.0-dev libxcb
 sudo apt install -y libxcb-render-util0-dev libxcb-shape0-dev libxcb-xfixes0-dev 
 sudo apt autoremove && sudo apt autoclean -y
 sudo gem install evil-winrm
+sudo apt purge burpsuite
 echo "Goooooolang setup"
 go=$(curl https://go.dev/dl/ -s 2>/dev/null | grep linux | grep amd64 | head -n 1 | awk -F \" '{print $4}')
 wget https://go.dev$go
@@ -44,7 +45,7 @@ cp .config/compton/compton.conf ~/.config/compton/compton.conf
 cp .config/rofi/config ~/.config/rofi/config
 cp .config/i3/config ~/.config/i3/config
 
-cp .fehbg ~/.fehbg
+cp ~/kali-setup/dots/.fehbg ~/.fehbg
 mkdir -p ~/.wallpaper
 cp ~/kali-setup/wallpaper.jpeg ~/.wallpaper/wallpaper.jpeg
 
@@ -67,8 +68,3 @@ echo "type exit after zsh install"
 sleep 10
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 cp ~/kali-setup/dots/.zshrc ~/.zshrc
-
-echo "Import Bookmarks"
-echo "Get Burp pro :D"
-echo "Done! To have the wallpaper set on every boot edit ~.fehbg"
-echo "After reboot: Select i3 on login, run lxappearance and select arc-dark"
