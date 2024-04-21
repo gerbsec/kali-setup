@@ -12,6 +12,7 @@ sudo apt install -y libxcb-shape0-dev libxcb-keysyms1-dev libpango1.0-dev libxcb
 sudo apt install -y libxcb-render-util0-dev libxcb-shape0-dev libxcb-xfixes0-dev 
 sudo apt autoremove && sudo apt autoclean -y
 sudo gem install evil-winrm
+sudo apt install xclip -y
 sudo apt purge burpsuite
 echo "Goooooolang setup"
 go=$(curl https://go.dev/dl/ -s 2>/dev/null | grep linux | grep amd64 | head -n 1 | awk -F \" '{print $4}')
