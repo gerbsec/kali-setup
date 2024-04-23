@@ -11,6 +11,7 @@ sudo apt install -y arandr flameshot arc-theme feh i3blocks i3status i3 i3-wm lx
 sudo apt install -y libxcb-shape0-dev libxcb-keysyms1-dev libpango1.0-dev libxcb-util0-dev libxcb1-dev libxcb-icccm4-dev libyajl-dev libev-dev libxcb-xkb-dev libxcb-cursor-dev libxkbcommon-dev libxcb-xinerama0-dev libxkbcommon-x11-dev libstartup-notification0-dev libxcb-randr0-dev libxcb-xrm0 libxcb-xrm-dev autoconf meson apt-transport-https neo4j bloodhound
 sudo apt install -y libxcb-render-util0-dev libxcb-shape0-dev libxcb-xfixes0-dev 
 sudo apt autoremove && sudo apt autoclean -y
+sudo apt install xclip -y
 sudo gem install evil-winrm
 sudo apt purge burpsuite
 echo "Goooooolang setup"
