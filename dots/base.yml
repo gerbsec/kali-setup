@@ -90,10 +90,10 @@ matches:
     replace: sudo nmap -sC -sV -v -p- -o nmap {{clipboard}} --min-rate 
 
   - trigger: ":lping"
-    replace: for i in {1..254} ;do (ping -c {{clipboard}} | grep "bytes from" &) ;done
+    replace: for i in {1..254} ;do (ping -c 1 172.16.5.$i | grep "bytes from" &) ;done
 
   - trigger: ":wping"
-    replace: for /L %i in (1 1 254) do ping {{clipboard}} -n 1 -w 100 | find "Reply"
+    replace: for /L %i in (1 1 254) do ping 172.16.5.%i -n 1 -w 100 | find "Reply"
 
   - trigger: ":dirsearch"
     replace: "dirsearch -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 64 -e php,txt,html -f -u {{clipboard}}"
