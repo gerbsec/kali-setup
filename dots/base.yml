@@ -76,9 +76,6 @@ matches:
   - trigger: ":pyserver"
     replace: "python3 -m http.server"
 
-   - trigger: ":webup"
-    replace: "python3 -m http.server 80"
-
   - trigger: ":phpserver"
     replace: "php -S 0.0.0.0:"
                                                                                 
