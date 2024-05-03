@@ -129,7 +129,7 @@ matches:
 
   - trigger: ":dirsearch3"
     replace: "dirsearch -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt -t 64 -e php,txt,html -f -u {{clipboard}}"
-
+    
   - trigger: ":findext"
     replace: "ffuf -w /usr/share/seclists/Discovery/Web-Content/web-extensions.txt:FUZZ -u http://{{clipboard}}/blog/indexFUZZ"
 
