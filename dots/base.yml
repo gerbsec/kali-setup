@@ -123,7 +123,7 @@ matches:
 
   - trigger: ":dirsearch"
     replace: "dirsearch -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 64 -e php,txt,html -f -u {{clipboard}}"
-
+    
   - trigger: ":dirsearch2"
     replace: "dirsearch -w /usr/share/wordlists/dirb/common.txt -t 64 -e php,txt,html -f -u {{clipboard}}"   
 
