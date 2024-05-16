@@ -29,7 +29,7 @@ matches:
 
   - trigger: ":clipboard"
     replace: "{{clipboard}}"
-                  
+
 # SETUP              
   - trigger: ":setup"                  
     replace : |          
