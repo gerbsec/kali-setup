@@ -47,6 +47,7 @@ matches:
       wget -q https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/CodeExecution/Invoke-ReflectivePEInjection.ps1 &
       wget -q https://github.com/itm4n/PrintSpoofer/releases/download/v1.0/PrintSpoofer64.exe &
       wget -q https://github.com/skahwah/SQLRecon/releases/download/v3.3/SQLRecon.exe &
+      wget -q https://github.com/jtmpu/PrecompiledBinaries/raw/master/SpoolSample.exe &
       wget -q https://download.sysinternals.com/files/SysinternalsSuite.zip && unzip SysinternalsSuite.zip &
       wget -q https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.5/LaZagne.exe &
       wget -q https://github.com/ly4k/PwnKit/raw/main/PwnKit & 
