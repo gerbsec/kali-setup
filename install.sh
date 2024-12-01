@@ -33,7 +33,7 @@ sudo apt purge burpsuite -y
 
 # Go Language Setup
 echo "Setting up Go language..."
-go=$(curl https://go.dev/dl/ -s 2>/dev/null | grep linux | grep amd64 | head -n 1 | awk -F " '{print $4}')
+go=$(curl https://go.dev/dl/ -s 2>/dev/null | grep linux | grep amd64 | head -n 1 | awk -F \" '{print $4}')
 wget https://go.dev$go
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $(echo $go | awk -F "/" '{print $3}')
 rm -rf $(echo $go | awk -F "/" '{print $3}')
@@ -44,7 +44,7 @@ bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
 
 # Install Nerd Fonts
 mkdir -p ~/.local/share/fonts/
-curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest  | grep -E "browser_download_url.*RobotoMono.zip" | cut -d : -f 2,3 | tr -d " |  wget -qi -
+curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest  | grep -E "browser_download_url.*RobotoMono.zip" | cut -d : -f 2,3 | tr -d \" |  wget -qi -
 unzip RobotoMono.zip -d ~/.local/share/fonts/
 fc-cache -fv
 
@@ -75,7 +75,7 @@ export XCURSOR_SIZE=20' > ~/.xsessionrc
 
 # Install Espanso
 echo "Installing Espanso..."
-curl -s https://api.github.com/repos/espanso/espanso/releases/latest  | grep -E "browser_download_url.*Espanso-X11.AppImage" | cut -d : -f 2,3 | tr -d " | grep -v sha256 | wget -qi - -O espanso
+curl -s https://api.github.com/repos/espanso/espanso/releases/latest  | grep -E "browser_download_url.*Espanso-X11.AppImage" | cut -d : -f 2,3 | tr -d \" | grep -v sha256 | wget -qi - -O espanso
 chmod +x espanso && sudo mv espanso /usr/bin/espanso 
 espanso service register
 espanso start
