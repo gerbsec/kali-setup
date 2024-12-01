@@ -108,11 +108,11 @@ sudo chown $username:$username $install_dir/exfil_exchange_mail
 wget https://raw.githubusercontent.com/rootsecdev/Azure-Red-Team/master/Tokens/exfil_exchange_mail.py -O $install_dir/exfil_exchange_mail/exfil_exchange_mail.py
 
 # Install pip and pipx tools
-sudo pipx ensurepath --global
-sudo pipx install azure-cli
-sudo pipx install pwntools
-sudo pipx install graphspy
-sudo pipx install "git+https://github.com/dirkjanm/ROADtools" --include-deps
+pipx ensurepath --global
+pipx install azure-cli
+pipx install pwntools
+pipx install graphspy
+pipx install "git+https://github.com/dirkjanm/ROADtools" --include-deps
 sudo pip install requests colorama
 
 # Configure Docker to run under User Context
