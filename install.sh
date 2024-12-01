@@ -110,6 +110,7 @@ wget https://raw.githubusercontent.com/rootsecdev/Azure-Red-Team/master/Tokens/e
 # Install pip and pipx tools
 sudo pipx ensurepath --global
 sudo pipx install azure-cli
+sudo pipx install pwntools
 sudo pipx install graphspy
 sudo pipx install "git+https://github.com/dirkjanm/ROADtools" --include-deps
 sudo pip install requests colorama
