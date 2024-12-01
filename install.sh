@@ -141,7 +141,7 @@ rm azurehound.zip
 # Install BloodHoundCE
 echo "Setting up BloodHound Community Edition..."
 mkdir -p $install_dir/BloodhoundCE
-curl https://raw.githubusercontent.com/SpecterOps/BloodHound/main/examples/docker-compose/docker-compose.yml -o /opt/mcrtp_bootcamp_tools/BloodhoundCE/docker-compose.yml
+curl https://raw.githubusercontent.com/SpecterOps/BloodHound/main/examples/docker-compose/docker-compose.yml -o /opt/azure_pentesting/BloodhoundCE/docker-compose.yml
 
 # Post Installation Activities
 # Clear the terminal
@@ -155,8 +155,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Instructions
-echo -e "${BLUE}Bloodhound CE docker-compose file has been downloaded to /opt/mcrtp_bootcamp_tools/BloodhoundCE${NC}"
-echo -e "${YELLOW}To launch Bloodhound CE, navigate to${NC} ${GREEN}"/opt/mcrtp_bootcamp_tools/BloodhoundCE/"${NC} ${YELLOW}and run the following command:${NC} ${GREEN}docker-compose up${NC}"
+echo -e "${BLUE}Bloodhound CE docker-compose file has been downloaded to /opt/azure_pentesting/BloodhoundCE${NC}"
+echo -e "${YELLOW}To launch Bloodhound CE, navigate to${NC} ${GREEN}"/opt/azure_pentesting/BloodhoundCE/"${NC} ${YELLOW}and run the following command:${NC} ${GREEN}docker-compose up${NC}"
 echo -e "${YELLOW}Note the randomly generated password from the logs, as you'll need it for the first login.${NC}"
 echo -e "${YELLOW}To retrieve the password, use the command:${NC} ${GREEN}docker logs bloodhoundce_bloodhound_1 2>&1 | grep \"Initial Password Set To:\"${NC}"
 echo -e "${YELLOW}Access the GUI at:${NC} ${GREEN}http://localhost:8080/ui/login${NC}. ${YELLOW}Ensure no other applications (e.g., BurpSuite) are using this port.${NC}"
