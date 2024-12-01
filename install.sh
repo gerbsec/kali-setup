@@ -8,7 +8,7 @@ arch=$(uname -m)
 sudo -v
 
 # Preparation tasks 
-install_dir=/opt/mcrtp_bootcamp_tools
+install_dir=/opt/azure_pentesting
 sudo mkdir -p "$install_dir"
 sudo chown $username:$username $install_dir
 
