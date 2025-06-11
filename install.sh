@@ -16,7 +16,7 @@ sudo chown $username:$username $install_dir
 echo "Updating and upgrading system, and installing dependencies..."
 sudo dpkg --add-architecture i386
 sudo apt update && sudo apt dist-upgrade -y
-sudo apt install -y curl zsh tmux vim binutils gobuster seclists dirsearch openjdk-17-jdk \
+sudo apt install -y curl zsh tmux vim binutils gobuster seclists dirsearch openjdk-25-jdk \
     arandr flameshot arc-theme feh i3blocks i3status i3 i3-wm lxappearance python3-pip rofi unclutter \
     cargo compton papirus-icon-theme imagemagick libxcb-shape0-dev libxcb-keysyms1-dev libpango1.0-dev \
     libxcb-util0-dev libxcb1-dev libxcb-icccm4-dev libyajl-dev libev-dev libxcb-xkb-dev libxcb-cursor-dev \
