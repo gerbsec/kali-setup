@@ -22,8 +22,12 @@ sudo apt full-upgrade -y
 packages=(
   curl wget unzip ca-certificates apt-transport-https gnupg lsb-release software-properties-common
   zsh tmux vim git build-essential gdb ruby-full
-  python3 python3-pip pipx python3-venv python3-setuptools python3-dev cargo default-jdk
+  python3 python3-pip pipx python3-venv python3-setuptools python3-dev python3-requests python3-colorama cargo openjdk-25-jdk
   binutils gobuster seclists dirsearch rofi feh flameshot lxappearance xclip
+  libxcb-shape0-dev libxcb-keysyms1-dev libpango1.0-dev libxcb-util0-dev libxcb1-dev libxcb-icccm4-dev
+  libyajl-dev libev-dev libxcb-xkb-dev libxcb-cursor-dev libxkbcommon-dev libxcb-xinerama0-dev
+  libxkbcommon-x11-dev libstartup-notification0-dev libxcb-randr0-dev libxcb-xrm0 libxcb-xrm-dev
+  autoconf meson libxcb-render-util0-dev libxcb-xfixes0-dev
   papirus-icon-theme arc-theme hashcat evil-winrm neo4j
   docker.io docker-compose
 )
@@ -44,7 +48,8 @@ case "$arch" in
     exit 1
     ;;
 esac
-go_version="$(curl -fsSL https://go.dev/VERSION?m=text | head -n 1)"
+go_version="$(curl -fsSL https://go.dev/VERSION?m=text)"
+go_version="${go_version%%[$'\r\n']*}"
 go_tarball="${go_version}.linux-${go_arch}.tar.gz"
 echo "Installing ${go_version} for ${go_arch}..."
 wget -q "https://go.dev/dl/${go_tarball}" -O "${go_tarball}"
@@ -69,20 +74,21 @@ mkdir -p "$HOME/.wallpaper"
 cp "$script_dir/wallpaper.jpeg" "$HOME/.wallpaper/wallpaper.jpeg"
 
 
-# Install Espanso
+# Install Espanso — Debian X11 .deb (recommended on Debian-based distros)
+# https://espanso.org/docs/install/linux/#deb-x11
 echo "Installing Espanso..."
-curl -s https://api.github.com/repos/espanso/espanso/releases/latest \
-  | grep -E "browser_download_url.*Espanso-X11.AppImage" \
-  | cut -d : -f 2,3 \
-  | tr -d '"' \
-  | grep -v sha256 \
-  | wget -qi - -O espanso
-chmod +x espanso
-sudo mv espanso /usr/local/bin/espanso
-mkdir -p "$HOME/.config/espanso/match"
-cp "$script_dir/dots/base.yml" "$HOME/.config/espanso/match/base.yml"
-espanso service register || true
-espanso start || true
+if [[ "$go_arch" == "amd64" ]]; then
+  espanso_deb="espanso-debian-x11-amd64.deb"
+  wget -q "https://github.com/espanso/espanso/releases/latest/download/${espanso_deb}" -O "/tmp/${espanso_deb}"
+  sudo apt install -y "/tmp/${espanso_deb}"
+  rm -f "/tmp/${espanso_deb}"
+  mkdir -p "$HOME/.config/espanso/match"
+  cp "$script_dir/dots/base.yml" "$HOME/.config/espanso/match/base.yml"
+  espanso service register || true
+  espanso start || true
+else
+  echo "Skipping Espanso: official X11 .deb is amd64-only (espanso-debian-x11-amd64.deb). See espanso.org docs for other arches."
+fi
 
 # Install Oh My Zsh if not already installed.
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
@@ -105,61 +111,66 @@ git clone --depth=1 https://github.com/dievus/Oh365UserFinder "$install_dir/Oh36
 mkdir -p "$install_dir/exfil_exchange_mail"
 wget -q https://raw.githubusercontent.com/rootsecdev/Azure-Red-Team/master/Tokens/exfil_exchange_mail.py -O "$install_dir/exfil_exchange_mail/exfil_exchange_mail.py"
 
-# Install pipx tools
+# Install pipx tools (each app gets its own venv; avoids touching system site-packages)
 python3 -m pipx ensurepath
 pipx install --force azure-cli
 pipx install --force pwntools
 pipx install --force graphspy
 pipx install --force "git+https://github.com/dirkjanm/ROADtools" --include-deps
-python3 -m pip install --user --upgrade requests colorama
+# requests/colorama come from apt (python3-requests, python3-colorama) — do not use pip install --user on Kali
 
+echo "Adding user to docker group..."
 # Configure Docker under user context
 sudo usermod -aG docker "$username"
 
 # Set a randomized hostname (DESKTOP-XXXXXXXX)
-random_suffix="$(tr -dc 'A-Z0-9' < /dev/urandom | head -c 8)"
+# NOTE: Do not use `tr ... | head -c 9` with `set -o pipefail`: head exits first and tr gets SIGPIPE (exit 141), which aborts the script.
+chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+random_suffix=''
+for _ in {1..8}; do
+  i=$((RANDOM % ${#chars}))
+  random_suffix+="${chars:i:1}"
+done
 new_hostname="DESKTOP-${random_suffix}"
 echo "Setting hostname to ${new_hostname}..."
-sudo hostnamectl set-hostname "$new_hostname"
-# Keep /etc/hosts in sync to avoid: "sudo: unable to resolve host ..."
+# /etc/hosts must list the hostname before hostnamectl, or sudo will warn "unable to resolve host".
 if sudo grep -qE '^127\.0\.1\.1[[:space:]]+' /etc/hosts; then
   sudo sed -i -E "s/^127\\.0\\.1\\.1[[:space:]].*/127.0.1.1\t${new_hostname}/" /etc/hosts
 else
   echo -e "127.0.1.1\t${new_hostname}" | sudo tee -a /etc/hosts > /dev/null
 fi
+sudo hostnamectl set-hostname "$new_hostname"
 
-# AzureHound setup
+# AzureHound: SpecterOps ships AzureHound_v*_linux_{amd64,arm64}.zip (old azurehound-linux-amd64.zip no longer exists).
 echo "Setting up AzureHound..."
-case "$arch" in
-  x86_64) file_name="azurehound-linux-amd64.zip" ;;
-  arm64|aarch64) file_name="azurehound-linux-arm64.zip" ;;
-  *)
-    echo "Unsupported architecture: $arch"
-    exit 1
-    ;;
-esac
-wget -q "https://github.com/BloodHoundAD/AzureHound/releases/latest/download/${file_name}" -O azurehound.zip
+azure_url="$(curl -fsSL https://api.github.com/repos/SpecterOps/AzureHound/releases/latest | python3 -c "
+import json, sys
+j = json.load(sys.stdin)
+a = sys.argv[1]
+for x in j.get(\"assets\", []):
+    n = x[\"name\"]
+    if n.endswith(\"_linux_%s.zip\" % a) and not n.endswith(\".sha256\"):
+        print(x[\"browser_download_url\"])
+        sys.exit(0)
+sys.exit(1)
+" "$go_arch")"
+wget -q "$azure_url" -O azurehound.zip
+set +e
 unzip -o azurehound.zip
+uz=$?
+set -e
+[[ "$uz" -eq 0 || "$uz" -eq 1 ]] || exit "$uz"
 mkdir -p "$install_dir/azure_hound"
-mv -f ./azurehound "$install_dir/azure_hound/" || true
+chmod +x azurehound 2>/dev/null || true
+mv -f azurehound "$install_dir/azure_hound/"
 rm -f azurehound.zip
 
-# BloodHound CLI setup
 echo "Installing BloodHound CLI..."
-case "$arch" in
-  x86_64) bh_cli_asset="bloodhound-cli-linux-amd64.tar.gz" ;;
-  arm64|aarch64) bh_cli_asset="bloodhound-cli-linux-arm64.tar.gz" ;;
-  *)
-    echo "Unsupported architecture for BloodHound CLI: $arch"
-    exit 1
-    ;;
-esac
-wget -q "https://github.com/SpecterOps/bloodhound-cli/releases/latest/download/${bh_cli_asset}" -O bloodhound-cli.tar.gz
+wget -q "https://github.com/SpecterOps/bloodhound-cli/releases/latest/download/bloodhound-cli-linux-${go_arch}.tar.gz" -O bloodhound-cli.tar.gz
 tar -xzf bloodhound-cli.tar.gz
 chmod +x bloodhound-cli
 sudo mv -f bloodhound-cli /usr/local/bin/bloodhound-cli
 rm -f bloodhound-cli.tar.gz
-
 
 clear
 BLUE='\033[0;34m'
@@ -167,9 +178,6 @@ YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
-echo -e "${BLUE}BloodHound CE compose file: ${GREEN}$install_dir/BloodhoundCE/docker-compose.yml${NC}"
-echo -e "${YELLOW}Launch with:${NC} ${GREEN}cd $install_dir/BloodhoundCE && docker compose up -d${NC}"
-echo -e "${YELLOW}Login UI:${NC} ${GREEN}http://localhost:8080/ui/login${NC}"
-echo -e "${YELLOW}If needed, retrieve initial password from logs with:${NC}"
-echo -e "${GREEN}docker logs bloodhoundce-bloodhound-1 2>&1 | grep \"Initial Password Set To:\"${NC}"
+echo -e "${BLUE}AzureHound:${NC} ${GREEN}$install_dir/azure_hound/azurehound${NC}"
+echo -e "${BLUE}bloodhound-cli:${NC} ${GREEN}/usr/local/bin/bloodhound-cli${NC}"
 echo "Kali setup complete. Reboot is recommended so groups/PATH changes fully apply."
