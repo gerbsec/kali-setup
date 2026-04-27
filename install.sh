@@ -106,6 +106,18 @@ python3 -m pip install --user --upgrade requests colorama
 # Configure Docker under user context
 sudo usermod -aG docker "$username"
 
+# Set a randomized hostname (DESKTOP-XXXXXXXX)
+random_suffix="$(tr -dc 'A-Z0-9' < /dev/urandom | head -c 8)"
+new_hostname="DESKTOP-${random_suffix}"
+echo "Setting hostname to ${new_hostname}..."
+sudo hostnamectl set-hostname "$new_hostname"
+# Keep /etc/hosts in sync to avoid: "sudo: unable to resolve host ..."
+if sudo grep -qE '^127\.0\.1\.1[[:space:]]+' /etc/hosts; then
+  sudo sed -i -E "s/^127\\.0\\.1\\.1[[:space:]].*/127.0.1.1\t${new_hostname}/" /etc/hosts
+else
+  echo -e "127.0.1.1\t${new_hostname}" | sudo tee -a /etc/hosts > /dev/null
+fi
+
 # AzureHound setup
 echo "Setting up AzureHound..."
 case "$arch" in
