@@ -36,15 +36,25 @@ sudo apt purge burpsuite -y
 
 # Go Language Setup
 echo "Setting up Go language..."
-go=$(curl https://go.dev/dl/ -s 2>/dev/null | grep linux | grep amd64 | head -n 1 | awk -F \" '{print $4}')
-wget https://go.dev$go
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $(echo $go | awk -F "/" '{print $3}')
-rm -rf $(echo $go | awk -F "/" '{print $3}')
-mkdir -p ~/go
+case "$arch" in
+  x86_64) go_arch="amd64" ;;
+  arm64|aarch64) go_arch="arm64" ;;
+  *)
+    echo "Unsupported architecture for Go: $arch"
+    exit 1
+    ;;
+esac
+go_version="$(curl -fsSL https://go.dev/VERSION?m=text | head -n 1)"
+go_tarball="${go_version}.linux-${go_arch}.tar.gz"
+echo "Installing ${go_version} for ${go_arch}..."
+wget -q "https://go.dev/dl/${go_tarball}" -O "${go_tarball}"
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf "${go_tarball}"
+rm -f "${go_tarball}"
+mkdir -p "$HOME/go"
 
 # Install GEF (GDB Enhanced Features)
 bash -c "$(curl -fsSL https://gef.blah.cat/sh)"
-
 
 
 # Create config directories and copy configs
