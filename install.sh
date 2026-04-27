@@ -22,10 +22,10 @@ sudo apt full-upgrade -y
 packages=(
   curl wget unzip ca-certificates apt-transport-https gnupg lsb-release software-properties-common
   zsh tmux vim git build-essential gdb ruby-full
-  python3 python3-pip pipx python3-venv python3-setuptools python3-dev cargo openjdk-17-jdk
+  python3 python3-pip pipx python3-venv python3-setuptools python3-dev cargo default-jdk
   binutils gobuster seclists dirsearch rofi feh flameshot lxappearance xclip
   papirus-icon-theme arc-theme hashcat evil-winrm neo4j
-  docker.io docker-compose-v2
+  docker.io docker-compose
 )
 sudo apt install -y "${packages[@]}"
 sudo apt autoremove -y
